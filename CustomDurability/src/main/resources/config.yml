@@ -1,0 +1,26 @@
+#CustomDurability by Dyukusi
+
+#Unbreaking enchantment effect( level, undamage probability(0-100%) )
+unbreaking_effect:
+  - 0,0
+  - 1,15
+  - 2,30
+  - 3,45
+  - 4,60
+  - 5,70
+  - 6,80
+  - 7,85
+  - 8,90
+  - 9,93
+  - 10,96
+
+#Durability decrease
+durability_decrease:
+  DIAMOND_PICKAXE:
+    - STONE,4
+  IRON_PICKAXE:
+    - STONE,2
+  GOLD_PICKAXE:
+    - STONE,1
+  STONE_PICKAXE:
+    - STONE,2

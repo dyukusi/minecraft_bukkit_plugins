@@ -1,0 +1,9 @@
+name: CustomDurability
+version: 0.0.1
+main: jp.mydns.dyukusi.customdurability.CustomDurability
+commands:
+   cd:
+      description: set durability of the item currently in you hand.
+      usage: /cd set [durability]
+      permission: CustomDurability.set
+      permission-message: You don't have <permission>
