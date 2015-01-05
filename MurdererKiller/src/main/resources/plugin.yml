@@ -1,0 +1,10 @@
+name: MurdererKiller
+main: jp.mydns.dyukusi.MurdererKiller.MurdererKiller
+version: 0.0.1
+commands:
+   mk:
+      description: This is a test command by Dyukusi.
+      usage: /mk jail [Person's name what you want to jail]
+      permission: MurdererKiller.jail
+      permission-message: You don't have <permission>
+      
