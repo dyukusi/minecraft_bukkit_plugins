@@ -1,0 +1,34 @@
+#CashDropPlus by Dyukusi( dyukusin@gmail.com )
+
+#Base reward
+base_reward:
+  - BAT,10
+  - BLAZE,150
+  - CAVE_SPIDER,30
+  - CREEPER,15
+  - ENDER_DRAGON,5000
+  - ENDERMAN,100
+  - GHAST,300
+  - MAGMA_CUBE,120
+  - PIG_ZOMBIE,55
+  - SILVERFISH,10
+  - SKELETON,30
+  - SLIME,15
+  - SPIDER,20
+  - SQUID,10
+  - WITCH,40
+  - WITHER,5000
+  - WITHER_SKULL,100
+  - WOLF,30
+  - ZOMBIE,10
+  - GUARDIAN,80
+  - ENDERMITE,400
+  
+#Enchant effect( 100% = base_reward , 150% = 1.5*base_reward)
+enchant_effect:
+  - LOOT_BONUS_MOBS,1,120
+  - LOOT_BONUS_MOBS,2,140
+  - LOOT_BONUS_MOBS,3,160
+  - LOOT_BONUS_MOBS,4,180
+  - LOOT_BONUS_MOBS,5,200
+  
