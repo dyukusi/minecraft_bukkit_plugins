@@ -1,0 +1,9 @@
+name: DevilNetherPortal
+version: 0.0.1
+main: jp.mydns.dyukusi.devilnetherportal.DevilNetherPortal
+commands:
+   escape:
+      description: Back to gate from nether command.
+      usage: /escape
+      permission: devilnetherportal.escape
+      permission-message: You don't have <permission>?

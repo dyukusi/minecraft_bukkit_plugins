@@ -1,0 +1,17 @@
+#Notificator config file by Dyukusi ( dyukusin@gmail.com )
+
+#notification interval( 0 : notify only at login , n : notify per n min );
+server_news_interval: 15
+player_news_interval: 15
+
+#player news character count limit
+player_news_char_limit: 80
+
+#player news charge
+player_news_charge: 100
+
+#Server news( you can add more line )
+server_news:
+  - This is a sample news text.
+  - Thank you for using my plugin.
+  -                        Dyukusi

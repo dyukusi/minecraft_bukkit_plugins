@@ -2,7 +2,7 @@ package jp.mydns.dyukusi.automatictranslator;
 
 import java.io.IOException;
 
-import jp.mydns.dyukusi.automatictranslator.listener.Translation;
+import jp.mydns.dyukusi.listener.Translation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -1,0 +1,9 @@
+name: CreateTeleportShop
+version: 0.0.1
+main: jp.mydns.dyukusi.createteleportshop.CreateTeleportShop
+commands:
+   cts:
+      description: CreatePortalShop command.
+      usage: /cts comment [PORTAL_NAME] [COMMENT SENTENCE]
+      permission: createportalshop.comment
+      permission-message: You don't have <permission>?

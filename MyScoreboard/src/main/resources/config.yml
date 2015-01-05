@@ -1,0 +1,17 @@
+#Notificator config file
+
+#notification interval( 0 : notificate only at login , n : notificate per n min );
+server_news_interval: 1
+player_news_interval: 0
+
+#Server news( you can add more line )
+server_news:
+  - §bThis is sample news text
+  - Thank you for using my plugin.
+  -                        Dyukusi
+  
+#Player news( you can add more line )
+server_news:
+  - §bThis is sample player news text
+  - Thank you for using my plugin!!!
+  -                        Dyukusi

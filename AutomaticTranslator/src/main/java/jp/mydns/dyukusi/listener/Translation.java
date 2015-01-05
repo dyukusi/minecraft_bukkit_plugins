@@ -1,4 +1,4 @@
-package jp.mydns.dyukusi.automatictranslator.listener;
+package jp.mydns.dyukusi.listener;
 
 import java.util.HashMap;
 import java.util.Map;

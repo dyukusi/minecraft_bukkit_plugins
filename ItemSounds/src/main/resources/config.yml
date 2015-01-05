@@ -1,0 +1,109 @@
+#ItemSounds by Dyukusi( dyukusin@gmail.com )
+
+
+#default(undefined in this config) equip armor sound setting( sound, volume, pitch )
+default_equip_armor_sound: HORSE_ARMOR,1,0.7
+
+#equip armor sound setting( material, sound, volume, pitch )
+equip_armor_sounds:
+  - DIAMOND_HELMET,ZOMBIE_METAL,1,0.9  
+  - DIAMOND_CHESTPLATE,ZOMBIE_METAL,1,0.5
+  - DIAMOND_LEGGINGS,ZOMBIE_METAL,1,0.6
+  - DIAMOND_BOOTS,ZOMBIE_METAL,1,0.8
+  
+######################################################################################
+
+#default(undefined in this config) equip handitem sound setting( sound, volume, pitch )
+default_equip_handitem_sound: NOTE_STICKS,1,0.8
+
+#equip item in quickbar sound setting( material, sound, volume, pitch )
+equip_handitem_sounds:
+  - DIAMOND_SWORD,ANVIL_LAND,1,1.5
+  - DIRT,DIG_GRASS,1,0.8
+  
+  
+######################################################################################
+
+#default(undefined in this config) put item sound setting( sound, volume, pitch )
+default_put_item_sound: NOTE_STICKS,1,0.5    
+
+#put item in inventory sound setting( material, sound, volume, pitch )
+put_item_sounds:
+  - WOOD_SWORD,WOOD_CLICK,1,0.5
+  - STONE_SWORD,STEP_STONE,1,1.2
+  - IRON_SWORD,ANVIL_LAND,1,0.6
+  - GOLD_SWORD,ANVIL_LAND,1,0.5
+  - DIAMOND_SWORD,ANVIL_LAND,1,1.2
+  - WOOD_SPADE,WOOD_CLICK,1,0.5
+  - STONE_SPADE,STEP_STONE,1,1.2
+  - IRON_SPADE,ANVIL_LAND,1,0.6
+  - GOLD_SPADE,ANVIL_LAND,1,0.5
+  - DIAMOND_SPADE,ANVIL_LAND,1,1.2
+  - WOOD_AXE,WOOD_CLICK,1,0.5
+  - STONE_AXE,STEP_STONE,1,1.2
+  - IRON_AXE,ANVIL_LAND,1,0.6
+  - GOLD_AXE,ANVIL_LAND,1,0.5
+  - DIAMOND_AXE,ANVIL_LAND,1,1.2
+  - WOOD_PICKAXE,WOOD_CLICK,1,0.5
+  - STONE_PICKAXE,STEP_STONE,1,1.2
+  - IRON_PICKAXE,ANVIL_LAND,1,0.6
+  - GOLD_PICKAXE,ANVIL_LAND,1,0.5
+  - DIAMOND_PICKAXE,ANVIL_LAND,1,1.2
+  - WOOD_HOE,WOOD_CLICK,1,0.5
+  - STONE_HOE,STEP_STONE,1,1.2
+  - IRON_HOE,ANVIL_LAND,1,0.6
+  - GOLD_HOE,ANVIL_LAND,1,0.5
+  - DIAMOND_HOE,ANVIL_LAND,1,1.2
+  - BOW,ARROW_HIT,1,0.6
+  - ARROW,STEP_LADDER,1,1.5
+  - LEATHER_HELMET,FALL_BIG,1,0.6
+  - LEATHER_CHESTPLATE,FALL_BIG,1,0.6
+  - LEATHER_LEGGINGS,FALL_BIG,1,0.6
+  - LEATHER_BOOTS,FALL_BIG,1,0.6
+  - IRON_HELMET,BLAZE_HIT,1,0.7
+  - IRON_CHESTPLATE,BLAZE_HIT,1,0.7
+  - IRON_LEGGINGS,BLAZE_HIT,1,0.7
+  - IRON_BOOTS,BLAZE_HIT,1,0.7
+  - GOLD_HELMET,BLAZE_HIT,1,0.7
+  - GOLD_CHESTPLATE,BLAZE_HIT,1,0.7
+  - GOLD_LEGGINGS,BLAZE_HIT,1,0.7
+  - GOLD_BOOTS,BLAZE_HIT,1,0.7
+  - CHAINMAIL_HELMET,HORSE_ARMOR,1,0.7
+  - CHAINMAIL_CHESTPLATE,HORSE_ARMOR,1,0.7
+  - CHAINMAIL_LEGGINGS,HORSE_ARMOR,1,0.7
+  - CHAINMAIL_BOOTS,HORSE_ARMOR,1,0.7
+  - DIAMOND_HELMET,BLAZE_HIT,1,0.5
+  - DIAMOND_CHESTPLATE,BLAZE_HIT,1,0.5
+  - DIAMOND_LEGGINGS,BLAZE_HIT,1,0.5
+  - DIAMOND_BOOTS,BLAZE_HIT,1,0.5
+  - DIRT,DIG_GRASS,1,0.5
+  - COBBLESTONE,DIG_GRAVEL,1,0.5
+  - MOSSY_COBBLESTONE,DIG_GRAVEL,1,0.5
+  - STONE,STEP_STONE,1,1.2
+  - WOOD,WOOD_CLICK,1,1.5
+  - SAND,DIG_SAND,1,1.5
+  - LOG,DIG_WOOD,1,1.2
+  - LOG_2,DIG_WOOD,1,1.2
+  - LEAVES,FIZZ,1,1.5
+  - GLASS,GLASS,1,1.5
+  - NOTE_BLOCK,PISTON_EXTEND,1,1.5
+  - WOOL,DIG_SNOW,1,10
+  - GRAVEL,DIG_GRAVEL,1,1.2
+  - NETHER_BRICK,DIG_GRAVEL,1,0.5
+  - DIAMOND,ORB_PICKUP,1,0.8
+  - DIAMOND_BLOCK,ZOMBIE_METAL,1,1.5
+  - EMERALD,ORB_PICKUP,1,1.2
+  - EMERALD_BLOCK,ZOMBIE_METAL,1,0.5
+  - REDSTONE,FUSE,1,2
+  - IRON_INGOT,ZOMBIE_METAL,1,1.5
+  - IRON_BLOCK,ZOMBIE_METAL,1,0.5
+  - GOLD_INGOT,ZOMBIE_METAL,1,1.5
+  - GOLD_BLOCK,ZOMBIE_METAL,1,0.5
+  - CHEST,STEP_LADDER,1,0.5
+  - WORKBENCH,CHEST_OPEN,1,0.5
+  - FURNACE,HORSE_LAND,1,0.5
+  - TORCH,WOOD_CLICK,1,1.0
+  - ANVIL,ANVIL_LAND,1,1.5
+  - BLAZE_ROD,BLAZE_HIT,1,1.5
+  - SKULL_ITEM,DRINK,1,0.5
+  - POTION,SWIM,1,1.5

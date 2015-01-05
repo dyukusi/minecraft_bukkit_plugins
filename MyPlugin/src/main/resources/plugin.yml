@@ -1,0 +1,3 @@
+name: MyPlugin
+version: 0.0.1
+main: jp.mydns.dyukusi.myplugin.MyPlugin
