@@ -35,7 +35,7 @@ public class CraftLevel extends JavaPlugin {
 	private HashMap<UUID, PlayerCraftLevelData> player_crafting_level;
 	private HashMap<Material, Integer> experience;
 	private int next_level_exp[];
-	private int minimum_success_rate, maximum_success_rate, increase_rate;
+	private int minimum_success_rate, maximum_success_rate, increase_rate, max_craft_level;
 	boolean no_requirements_data_error;
 
 	@Override
@@ -60,6 +60,7 @@ public class CraftLevel extends JavaPlugin {
 		minimum_success_rate = getConfig().getInt("minimum_success_rate");
 		maximum_success_rate = getConfig().getInt("maximum_success_rate");
 		increase_rate = getConfig().getInt("increase_rate");
+		max_craft_level = getConfig().getInt("max_craft_level");
 
 		String array[];
 
@@ -212,6 +213,10 @@ public class CraftLevel extends JavaPlugin {
 
 	public int get_increase_rate() {
 		return this.increase_rate;
+	}
+
+	public int get_max_craft_level() {
+		return this.max_craft_level;
 	}
 
 	public int get_experience(Material material) {

@@ -3,7 +3,10 @@ version: 0.0.1
 main: jp.mydns.dyukusi.craftlevel.CraftLevel
 commands:
    cl:
-      description: set level or exp command.
-      usage: /cl set [level or exp] [PlayerName] [Amount]
-      permission: CraftLevel.set
-      permission-message: You don't have <permission>
+      description: Main CraftLevel base command.
+      usage: /cl
+permissions:
+   craftlevel.status:
+       description: Display current craft level and craft experience.
+   craftlevel.set:
+       description: set craft level and experience.

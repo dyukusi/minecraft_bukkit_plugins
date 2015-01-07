@@ -12,6 +12,10 @@ increase_rate: 5
 #When the level requirement of the item that isn't defined in this config is crafted, display error message. 
 no_requirements_data_error: true
 
+#Max craft level
+max_craft_level: 50
+
+
 #Next level experience requirement( level,exp )
 next_level:
   - 1,50

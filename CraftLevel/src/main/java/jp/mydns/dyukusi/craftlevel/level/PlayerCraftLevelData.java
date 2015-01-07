@@ -46,12 +46,17 @@ public class PlayerCraftLevelData implements Serializable {
 	}
 
 	// true if level up
-	public boolean gain_exp(int gain, int next_exp[]) {
+	public boolean gain_exp(int gain, int next_exp[], int max_level) {
 		this.exp += gain;
 
 		if (this.exp >= next_exp[level]) {
 			this.exp -= next_exp[level];
 			this.level++;
+
+			if (this.level >= max_level) {
+				this.exp = 0;
+			}
+
 			return true;
 		}
 

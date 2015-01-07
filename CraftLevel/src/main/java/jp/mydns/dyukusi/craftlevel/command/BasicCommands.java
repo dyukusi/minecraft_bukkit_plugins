@@ -17,49 +17,91 @@ public class BasicCommands implements CommandExecutor {
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		PlayerCraftLevelData pinf = plugin.get_player_crafting_level_info((Player) sender);
+
+		PlayerCraftLevelData pinf = null;
+
+		if (sender instanceof Player) {
+			pinf = plugin.get_player_crafting_level_info((Player) sender);
+		}
 
 		if (cmd.getName().equals("cl")) {
 
-			if (args.length == 1) {
+			// display current level and experience
+			if (args[0].equals("status")) {
 
-				// display current level
-				if (args[0].equals("level")) {
-					sender.sendMessage(plugin.get_prefix() + ChatColor.WHITE + " CraftLevel : " + ChatColor.GOLD
-							+ pinf.get_level());
-					return true;
-				}
-				// display current exp
-				else if (args[0].equals("exp")) {
-					sender.sendMessage(plugin.get_prefix() + ChatColor.WHITE + " Exp : " + ChatColor.GOLD
-							+ pinf.get_exp() + ChatColor.WHITE + "/" + plugin.get_next_level_exp()[pinf.get_level()]);
-					return true;
-				}
+				if (sender.hasPermission(this.get_permission_prefix() + "status")) {
 
-			} else if (args.length == 4) {
+					if (args.length == 1) {
 
-				// set level Dyukusi 0
-				// display current level
-				if (args[0].equals("set")) {
-
-					if (plugin.getServer().getPlayer(args[2]) != null) {
-						pinf = plugin.get_player_crafting_level_info(plugin.getServer().getPlayer(args[2]));
-
-						// set level
-						if (args[1].equals("level")) {
-							pinf.set_level(Integer.parseInt(args[3]));
+						// /cl status
+						if (pinf != null) {
+							sender.sendMessage(this.get_display_status_message(pinf));
 							return true;
 						}
-						// set exp
-						else if (args[1].equals("exp")) {
-							pinf.set_exp(Integer.parseInt(args[3]));
+						// excuted from not Player
+						else {
+							// error message
+							sender.sendMessage(this.get_must_from_Player_error_message());
+						}
+
+					} else if (args.length == 2) {
+
+						// /cl status PlayerName
+						if (plugin.get_player_crafting_level_info_contains(plugin.getServer().getOfflinePlayer(args[1])
+								.getPlayer())) {
+							pinf = plugin.get_player_crafting_level_info(plugin.getServer().getOfflinePlayer(args[1])
+									.getPlayer());
+							sender.sendMessage(this.get_display_status_message(pinf));
+						}
+						// cant find player error
+						else {
+							sender.sendMessage(this.get_player_not_found_message(args[1]));
 							return true;
 						}
 
-					} else {
-						sender.sendMessage(ChatColor.RED + args[2] + " was not found in this server.");
 					}
+				} else {
+					sender.sendMessage(this.get_no_permission_error_message());
+					return true;
+				}
 
+			}
+			// set current level or exp command
+			else if (args[0].equals("set")) {
+
+				if (sender.hasPermission(get_permission_prefix() + "set")) {
+
+					// set level PlayerName amount
+					// set exp PlayerName amount
+					if (args.length == 4) {
+
+						if (plugin.get_player_crafting_level_info_contains(plugin.getServer().getOfflinePlayer(args[2])
+								.getPlayer())) {
+							pinf = plugin.get_player_crafting_level_info(plugin.getServer().getOfflinePlayer(args[2])
+									.getPlayer());
+
+							// set level
+							if (args[1].equals("level")) {
+								pinf.set_level(Integer.parseInt(args[3]));
+							}
+							// set exp
+							else if (args[1].equals("exp")) {
+								pinf.set_exp(Integer.parseInt(args[3]));
+							}
+
+							sender.sendMessage(this.get_success_set_status_message());
+							return true;
+
+						}
+						// player not found error
+						else {
+							sender.sendMessage(this.get_player_not_found_message(args[2]));
+						}
+
+					}
+				} else {
+					sender.sendMessage(this.get_no_permission_error_message());
+					return true;
 				}
 
 			}
@@ -67,6 +109,32 @@ public class BasicCommands implements CommandExecutor {
 		}
 
 		return false;
+	}
+
+	String get_no_permission_error_message() {
+		return plugin.get_prefix() + ChatColor.RED + " You don't have permission.";
+	}
+
+	String get_permission_prefix() {
+		return "craftlevel.";
+	}
+
+	String get_must_from_Player_error_message() {
+		return plugin.get_prefix() + ChatColor.RED + "This command must be excuted by Player.";
+	}
+
+	String get_display_status_message(PlayerCraftLevelData pinf) {
+		return plugin.get_prefix() + ChatColor.WHITE + " CraftLevel: " + ChatColor.GOLD + pinf.get_level()
+				+ ChatColor.WHITE + "  Exp: " + ChatColor.GOLD + pinf.get_exp() + ChatColor.WHITE + "/"
+				+ plugin.get_next_level_exp()[pinf.get_level()];
+	}
+
+	String get_player_not_found_message(String PlayerName) {
+		return plugin.get_prefix() + " " + ChatColor.RED + PlayerName + " is not found in this server.";
+	}
+
+	String get_success_set_status_message() {
+		return plugin.get_prefix() + "Set status command successfuly completed!";
 	}
 
 }
