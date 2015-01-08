@@ -1,9 +1,9 @@
-package jp.mydns.dyukusi.task;
+package jp.mydns.dyukusi.notificator.task;
 
 import java.util.List;
 
 import jp.mydns.dyukusi.notificator.Notificator;
-import jp.mydns.dyukusi.playernews.News;
+import jp.mydns.dyukusi.notificator.playernews.News;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

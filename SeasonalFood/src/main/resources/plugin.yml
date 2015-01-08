@@ -1,0 +1,9 @@
+name: SeasonalFood
+version: 0.0.1
+main: jp.mydns.dyukusi.seasonalfood.SeasonalFood
+commands:
+   sf:
+      description: can deposit and withdraw to offline players.
+      usage: /sf next
+      permission: seasonalfood.next
+      permission-message: You don't have <permission>

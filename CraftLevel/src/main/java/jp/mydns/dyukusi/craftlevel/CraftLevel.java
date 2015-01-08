@@ -17,6 +17,7 @@ import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.craftlevel.listener.CraftingItem;
 import jp.mydns.dyukusi.craftlevel.listener.PlayerLogin;
 import jp.mydns.dyukusi.craftlevel.requireinfo.RequirementInformation;
+import jp.mydns.dyukusi.seasonalfood.Title;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -39,7 +40,7 @@ public class CraftLevel extends JavaPlugin {
 	boolean no_requirements_data_error;
 
 	@Override
-	public void onEnable() {
+	public void onEnable() {		
 		// mcstats
 		try {
 			Metrics metrics = new Metrics(this);

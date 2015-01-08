@@ -1,0 +1,11 @@
+#SeasonFood by Dyukusi( dyukusin@gmail.com )
+
+#Ripe rate(Crop name, Spring, Summer, Autumn, Winter) 0~100%
+ripe_rate:
+  - CROPS,80,60,40,20
+  - COCOA,80,60,40,20
+  - POTATO,20,80,40,60
+  - MELON_STEM,20,80,40,60
+  - CARROT,20,40,80,60
+  - PUMPKIN_STEM,20,40,80,60
+  - NETHER_WARTS,30,30,30,30  

@@ -1,7 +1,6 @@
 package jp.mydns.dyukusi.myplugin;
 
 import jp.mydns.dyukusi.myplugin.listener.PlayerEffect;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MyPlugin extends JavaPlugin {
@@ -11,6 +10,8 @@ public class MyPlugin extends JavaPlugin {
 		getLogger().info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@MYPLUGIN");
 
 		this.getServer().getPluginManager().registerEvents(new PlayerEffect(this), this);
+		
+
 	}
 
 	@Override

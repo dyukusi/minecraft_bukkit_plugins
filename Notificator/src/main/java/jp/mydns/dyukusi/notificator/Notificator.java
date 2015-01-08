@@ -10,10 +10,10 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.mydns.dyukusi.command.PlayerNewsCommand;
-import jp.mydns.dyukusi.listener.PlayerJoin;
-import jp.mydns.dyukusi.playernews.News;
-import jp.mydns.dyukusi.task.Notification;
+import jp.mydns.dyukusi.notificator.command.PlayerNewsCommand;
+import jp.mydns.dyukusi.notificator.listener.PlayerJoin;
+import jp.mydns.dyukusi.notificator.playernews.News;
+import jp.mydns.dyukusi.notificator.task.Notification;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;

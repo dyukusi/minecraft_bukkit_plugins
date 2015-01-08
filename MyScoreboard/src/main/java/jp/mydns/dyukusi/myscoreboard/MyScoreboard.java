@@ -49,9 +49,10 @@ public class MyScoreboard extends JavaPlugin implements Listener {
 			return;
 		}
 
-		// for (Player player : getServer().getOnlinePlayers()) {
-		// set_status_scoreboard(player);
-		// }
+		for (Player player : this.getServer().getOnlinePlayers()) {
+			new Update_var(this, player, player.getScoreboard(), player.getScoreboard().getObjective(
+					DisplaySlot.SIDEBAR), economy, craftlevel);
+		}
 
 	}
 

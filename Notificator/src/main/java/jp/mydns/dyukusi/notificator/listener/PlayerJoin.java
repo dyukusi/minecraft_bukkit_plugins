@@ -1,7 +1,7 @@
-package jp.mydns.dyukusi.listener;
+package jp.mydns.dyukusi.notificator.listener;
 
 import jp.mydns.dyukusi.notificator.Notificator;
-import jp.mydns.dyukusi.task.Notification;
+import jp.mydns.dyukusi.notificator.task.Notification;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

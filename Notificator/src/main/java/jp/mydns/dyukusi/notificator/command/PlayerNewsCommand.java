@@ -1,4 +1,4 @@
-package jp.mydns.dyukusi.command;
+package jp.mydns.dyukusi.notificator.command;
 
 import jp.mydns.dyukusi.notificator.Notificator;
 import net.milkbowl.vault.economy.Economy;

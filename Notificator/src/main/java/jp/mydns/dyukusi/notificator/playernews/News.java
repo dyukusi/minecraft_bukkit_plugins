@@ -1,4 +1,4 @@
-package jp.mydns.dyukusi.playernews;
+package jp.mydns.dyukusi.notificator.playernews;
 
 import java.io.Serializable;
 import java.util.Calendar;

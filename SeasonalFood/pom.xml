@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>jp.mydns.dyukusi</groupId>
-	<artifactId>CraftLevel</artifactId>
+	<artifactId>SeasonalFood</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<repositories>
@@ -15,7 +15,6 @@
 			<id>Plugin Metrics</id>
 			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
-
 	</repositories>
 
 
@@ -33,14 +32,7 @@
 			<version>R7</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>title</groupId>
-			<artifactId>title</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/title.jar</systemPath>
-		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -71,6 +63,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 		</plugins>
 	</build>
 </project>
