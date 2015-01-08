@@ -50,23 +50,21 @@ public class GainExperience extends BukkitRunnable {
 
 			if (gain_exp > 0) {
 
-				player.sendMessage(ChatColor.GREEN + "+" + gain_exp + "   " + ChatColor.WHITE + "EXP: " + ChatColor.GOLD
-						+ pinf.get_exp() + ChatColor.WHITE + "/" + plugin.get_next_level_exp()[pinf.get_level()]
-						+ ChatColor.GOLD + " Success rate: "
-						+ (plugin.get_success_rate(pinf.get_level(), material) * 100) + "%");
+				boolean levelup = pinf.gain_exp(gain_exp, plugin.get_next_level_exp(), plugin.get_max_craft_level());
+
+				player.sendMessage(ChatColor.GREEN + "+" + gain_exp + "   " + ChatColor.WHITE + "EXP: "
+						+ ChatColor.GOLD + pinf.get_exp() + ChatColor.WHITE + "/"
+						+ plugin.get_next_level_exp()[pinf.get_level()] + ChatColor.WHITE + "  Success rate: "
+						+ ChatColor.GOLD + (plugin.get_success_rate(pinf.get_level(), material) * 100)
+						+ ChatColor.WHITE + "%");
 
 				// level up
-				if (pinf.gain_exp(gain_exp, plugin.get_next_level_exp(), plugin.get_max_craft_level())) {
+				if (levelup) {
 					plugin.getServer().broadcastMessage(
 							plugin.get_prefix() + " " + player.getName() + " : " + ChatColor.WHITE + "Lv "
 									+ ChatColor.GOLD + (pinf.get_level() - 1) + ChatColor.WHITE + " -> "
 									+ ChatColor.GOLD + pinf.get_level());
 
-					// player.sendMessage(plugin.get_prefix() + ChatColor.WHITE
-					// +
-					// "Lv " + ChatColor.GOLD
-					// + (pinf.get_level() - 1) + ChatColor.WHITE + " -> " +
-					// ChatColor.GOLD + pinf.get_level());
 					player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0.5F);
 				}
 
