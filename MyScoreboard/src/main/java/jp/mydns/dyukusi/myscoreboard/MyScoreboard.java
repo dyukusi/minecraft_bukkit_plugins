@@ -49,11 +49,10 @@ public class MyScoreboard extends JavaPlugin implements Listener {
 			return;
 		}
 
-		for (Player player : getServer().getOnlinePlayers()) {
-			set_status_scoreboard(player);
-		}
+		// for (Player player : getServer().getOnlinePlayers()) {
+		// set_status_scoreboard(player);
+		// }
 
-		new Update_var(this, economy, craftlevel).runTaskTimer(this, 5, 5);
 	}
 
 	@Override
@@ -63,14 +62,10 @@ public class MyScoreboard extends JavaPlugin implements Listener {
 
 	@EventHandler
 	void PlayerJoin(PlayerJoinEvent event) {
-		set_status_scoreboard(event.getPlayer());
-	}
-
-	void set_status_scoreboard(Player player) {
+		// set_status_scoreboard(event.getPlayer());
+		Player player = event.getPlayer();
 		ScoreboardManager manager = this.getServer().getScoreboardManager();
 		Scoreboard board = manager.getNewScoreboard();
-		board.registerNewTeam("sample team");
-
 		Objective objective;
 		if ((objective = board.getObjective("status")) == null) {
 			objective = board.registerNewObjective("status", player.getName());
@@ -81,7 +76,12 @@ public class MyScoreboard extends JavaPlugin implements Listener {
 		objective.getScore(exp_board);
 		objective.getScore(dollar_board);
 		player.getPlayer().setScoreboard(board);
+		new Update_var(this, event.getPlayer(), board, objective, economy, craftlevel).runTaskTimer(this, 10, 5);
 	}
+
+	// void set_status_scoreboard(Player player) {
+	//
+	// }
 
 	boolean setupEconomy() {
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
