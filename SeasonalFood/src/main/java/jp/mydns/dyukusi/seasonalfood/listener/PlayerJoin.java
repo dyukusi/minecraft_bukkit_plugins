@@ -18,7 +18,7 @@ public class PlayerJoin implements Listener {
 	@EventHandler
 	void PlayerJoinDisplaySeason(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		plugin.display_season(false, player, plugin.get_current_season());
+		plugin.display_season(false, player, plugin.get_current_season());		
 	}
 
 }
