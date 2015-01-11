@@ -25,7 +25,7 @@ public enum Language_EtoJ {
 	JUNGLE("熱帯雨林"),
 	JUNGLE_HILLS("熱帯雨林の丘"),
 	JUNGLE_EDGE("熱帯雨林の端"),
-	DEEP_OCEAN("深海"),
+	DEEP_OCEAN("遠洋海域"),
 	STONE_BEACH("岩礁"),
 	COLD_BEACH("極寒の海岸"),
 	BIRCH_FOREST("白樺の森"),
