@@ -1,0 +1,10 @@
+name: RegenerationPoint
+version: 0.0.1
+main: jp.mydns.dyukusi.regenerationpoint.RegenerationPoint
+commands:
+   rp:
+      description: Main RegenerationPoint base command.
+      usage: /rp
+   permissions:
+      biomenotificatior.create:
+          description: allow create new regeneration point command.
