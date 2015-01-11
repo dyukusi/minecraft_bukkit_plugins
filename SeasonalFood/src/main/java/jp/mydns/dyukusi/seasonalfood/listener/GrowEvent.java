@@ -27,11 +27,18 @@ public class GrowEvent implements Listener {
 	@EventHandler
 	void BlockGrow(BlockGrowEvent event) {
 		Material type = event.getBlock().getType();
-		boolean isRipe = false;
+		boolean isRipe = false;	
 
 		// NetherWarts
 		if (type.equals(Material.NETHER_WARTS)) {
 			if (NetherWartsState.RIPE.equals(NetherWartsState.values()[event.getNewState().getData().getData()])) {
+				isRipe = true;
+			}
+		}
+		// Cocoa
+		else if (type.equals(Material.COCOA)) {
+			if (event.getNewState().getData().getData() >= 8) {
+				plugin.getServer().broadcastMessage(type + " : isRipe.");
 				isRipe = true;
 			}
 		}
@@ -68,23 +75,5 @@ public class GrowEvent implements Listener {
 
 	}
 
-	@EventHandler
-	void LeavesDecay(LeavesDecayEvent event) {
-		plugin.getServer().broadcastMessage(event.getBlock().getType() + " is decaying");
-	}
-
-	@EventHandler
-	void BlockBreak(BlockBreakEvent event) {
-		if (event.getBlock().getType().equals(Material.DEAD_BUSH)) {
-			plugin.getServer().broadcastMessage("枯れた草消失確認。キャンセルを試みます。");
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	void BlockFade(BlockFadeEvent event) {
-		plugin.getServer().broadcastMessage(event.getBlock().getType() + " is fading");
-
-	}
 
 }
