@@ -1,10 +1,10 @@
-name: BiomeNotificator
+name: AreaNotificator
 version: 0.0.1
-main: jp.mydns.dyukusi.biomenotificator.BiomeNotificator
+main: jp.mydns.dyukusi.areanotificator.AreaNotificator
 commands:
-   bn:
-      description: Main BiomeNotificator base command.
-      usage: /bn
+   an:
+      description: Main AreaNotificator base command.
+      usage: /an
 permissions:
-   biomenotificatior.create:
+   areanotificatior.create:
        description: allow create new custom area command.

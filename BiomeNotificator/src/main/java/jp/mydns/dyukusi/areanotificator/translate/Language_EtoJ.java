@@ -1,4 +1,4 @@
-package jp.mydns.dyukusi.biomenotificator.translate;
+package jp.mydns.dyukusi.areanotificator.translate;
 
 public enum Language_EtoJ {
 	SWAMPLAND("湿地"),

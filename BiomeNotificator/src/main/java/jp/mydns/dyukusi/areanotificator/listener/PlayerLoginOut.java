@@ -1,6 +1,6 @@
-package jp.mydns.dyukusi.biomenotificator.listener;
+package jp.mydns.dyukusi.areanotificator.listener;
 
-import jp.mydns.dyukusi.biomenotificator.BiomeNotificator;
+import jp.mydns.dyukusi.areanotificator.AreaNotificator;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,9 +10,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerLoginOut implements Listener {
 
-	BiomeNotificator plugin;
+	AreaNotificator plugin;
 
-	public PlayerLoginOut(BiomeNotificator biomeNotificator) {
+	public PlayerLoginOut(AreaNotificator biomeNotificator) {
 		plugin = biomeNotificator;
 	}
 
@@ -25,7 +25,6 @@ public class PlayerLoginOut implements Listener {
 	@EventHandler
 	void PlayerLeaveListener(PlayerQuitEvent event) {
 		Player player = event.getPlayer();	
-		player.removeMetadata("biome", plugin);
 	}
 
 }

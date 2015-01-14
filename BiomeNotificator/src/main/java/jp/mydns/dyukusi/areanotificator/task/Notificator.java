@@ -1,8 +1,8 @@
-package jp.mydns.dyukusi.biomenotificator.task;
+package jp.mydns.dyukusi.areanotificator.task;
 
-import jp.mydns.dyukusi.biomenotificator.BiomeNotificator;
-import jp.mydns.dyukusi.biomenotificator.custominfo.CustomAreaInfo;
-import jp.mydns.dyukusi.biomenotificator.translate.Language_EtoJ;
+import jp.mydns.dyukusi.areanotificator.AreaNotificator;
+import jp.mydns.dyukusi.areanotificator.custominfo.CustomAreaInfo;
+import jp.mydns.dyukusi.areanotificator.translate.Language_EtoJ;
 import jp.mydns.dyukusi.title.Title;
 
 import org.bukkit.ChatColor;
@@ -12,12 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
+
 public class Notificator extends BukkitRunnable {
 
-	BiomeNotificator plugin;
+	AreaNotificator plugin;
 	Player player;
 
-	public Notificator(BiomeNotificator biomeNotificator, Player p) {
+	public Notificator(AreaNotificator biomeNotificator, Player p) {
 		this.plugin = biomeNotificator;
 		this.player = p;
 	}
@@ -29,14 +30,26 @@ public class Notificator extends BukkitRunnable {
 		if (!player.isOnline()) {
 			this.cancel();
 		}
+		
 
 		// change player current area
 		if (!plugin.isSame_area_with_last_time(player)) {
 			String current_area_name = plugin.get_current_area_name(player);
+			
+			// mix
+			if (current_area_name.equals(Biome.STONE_BEACH.name())) {
+				current_area_name = Biome.BEACH.name();
+			} else if (current_area_name.equals(Biome.EXTREME_HILLS_PLUS.name())) {
+				current_area_name = Biome.EXTREME_HILLS.name();
+			}
+			
+			
+			
 			player.removeMetadata("area", plugin);
 			player.setMetadata("area", new FixedMetadataValue(plugin, current_area_name));
 
 			boolean in_custom_area = false;
+			
 			try {
 				Language_EtoJ.valueOf(current_area_name);
 			} catch (IllegalArgumentException e) {
