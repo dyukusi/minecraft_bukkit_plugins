@@ -22,7 +22,8 @@ public class WeatherEffect extends JavaPlugin {
 			// Failed to submit the stats
 		}
 
-		new RainBreakBlock(this);
+		this.getServer().getPluginManager()
+				.registerEvents(new RainBreakBlock(this), this);
 	}
 
 	// 終了処理
