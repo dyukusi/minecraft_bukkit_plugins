@@ -5,37 +5,27 @@
 	<artifactId>OfflineDepositor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
+
 		<repository>
 			<id>Plugin Metrics</id>
 			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
-
 		<repository>
 			<id>vault-repo</id>
 			<url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
 		</repository>
-
 	</repositories>
-
+	<!--Bukkit API -->
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.9-R0.2</version>
-		</dependency>
-
-		<!-- Gson: Java to Json conversion -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
-			<scope>compile</scope>
+			<version>1.8-R0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -51,7 +41,6 @@
 			<version>R7</version>
 			<scope>compile</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -84,7 +73,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 
 </project>

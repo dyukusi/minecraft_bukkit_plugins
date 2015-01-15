@@ -29,9 +29,7 @@ public class OfflineDepositor extends JavaPlugin implements Listener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnable() {
-
-		getLogger().info("OfflineDepositor 起動確認");
-		
+	
 		// mcstats
 		try {
 			Metrics metrics = new Metrics(this);
@@ -40,7 +38,7 @@ public class OfflineDepositor extends JavaPlugin implements Listener {
 			this.getLogger().info(ChatColor.RED + "Failed to submit the stats");
 			// Failed to submit the stats
 		}
-	
+
 		this.getServer().getPluginManager().registerEvents(this, this);
 
 		// シリアライズファイル読み込み
@@ -68,11 +66,12 @@ public class OfflineDepositor extends JavaPlugin implements Listener {
 			System.out.println("Cannot read vault object!");
 			return;
 		}
-		
-		getCommand("od").setExecutor(new Deposit(this,economy));
-		
-		this.getServer().getPluginManager()
-		.registerEvents(new PlayerLogin(this, depositor,economy), this);
+
+		getCommand("od").setExecutor(new Deposit(this, economy));
+
+		this.getServer()
+				.getPluginManager()
+				.registerEvents(new PlayerLogin(this, depositor, economy), this);
 
 	}
 
@@ -90,8 +89,6 @@ public class OfflineDepositor extends JavaPlugin implements Listener {
 			e.printStackTrace();
 		}
 	}
-
-	
 
 	boolean setupEconomy() {
 

@@ -24,7 +24,6 @@ public class LoginDepositProcess extends BukkitRunnable {
 		this.to = player;
 	}
 
-	@Override
 	public void run() {	
 		economy.depositPlayer(to, di.get_amount());
 		to.sendMessage(ChatColor.LIGHT_PURPLE + "[Deposit] " + ChatColor.WHITE
