@@ -65,7 +65,7 @@ public class Deposit implements CommandExecutor {
 					else {
 						sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDepositor] " + ChatColor.WHITE
 								+ to.getName() + ChatColor.GREEN + " はオンラインなので、直ちに送金します。");
-						sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDpositor]" + ChatColor.AQUA + "<"
+						sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDepositor]" + ChatColor.AQUA + "<"
 								+ ChatColor.WHITE + to.getName() + ChatColor.AQUA
 								+ " is online now, so remmitance is implemented immediately.>");
 

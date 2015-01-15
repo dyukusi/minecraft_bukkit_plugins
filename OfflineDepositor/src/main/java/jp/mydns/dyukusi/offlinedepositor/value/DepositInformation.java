@@ -19,7 +19,7 @@ public class DepositInformation implements Serializable {
 
 		Calendar cl = Calendar.getInstance();
 		this.time = new Integer[] { cl.get(Calendar.YEAR),
-				cl.get(Calendar.MONTH), cl.get(Calendar.DATE),
+				cl.get(Calendar.MONTH)+1, cl.get(Calendar.DATE),
 				cl.get(Calendar.AM_PM), cl.get(Calendar.HOUR),
 				cl.get(Calendar.MINUTE) };
 
