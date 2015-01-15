@@ -31,12 +31,7 @@ public class InventoryListener implements Listener {
 
 		if (he instanceof Player) {
 			Player player = (Player) he;
-
-			// plugin.getServer().broadcastMessage("SlotType : " +
-			// event.getSlotType().toString());
-			//
-			if (!item.equals(Material.AIR))
-				player.sendMessage(ChatColor.YELLOW + " アイテム名 ： " + item.name());
+	
 
 			// アイテムを置いた時
 			if (!item.equals(Material.AIR)) {
