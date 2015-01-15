@@ -12,7 +12,6 @@ public class WeatherEffect extends JavaPlugin {
 
 	// 起動処理
 	public void onEnable() {
-		getLogger().info("WetherEffect Enabled Sucsessfully!!!!!!!!!!!!");
 		// mcstats
 		try {
 			Metrics metrics = new Metrics(this);
@@ -28,7 +27,6 @@ public class WeatherEffect extends JavaPlugin {
 
 	// 終了処理
 	public void onDisable() {
-		getLogger().info("WetherEffect Disabled Sucsessfully!!!!!!!!!!!!");
 	}
 
 }

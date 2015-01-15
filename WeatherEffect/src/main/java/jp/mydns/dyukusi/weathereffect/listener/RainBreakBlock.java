@@ -1,8 +1,5 @@
 package jp.mydns.dyukusi.weathereffect.listener;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import jp.mydns.dyukusi.weathereffect.WeatherEffect;
 import jp.mydns.dyukusi.weathereffect.process.BreakBlocks;
 
@@ -27,13 +24,6 @@ public class RainBreakBlock implements Listener {
 		p.getServer().getPluginManager().registerEvents(this, p);
 	}
 
-	// テストログインイベント
-	@EventHandler
-	public void LoginEvent(PlayerLoginEvent login) {
-		plugin.getServer().broadcastMessage(
-				login.getPlayer().getDisplayName() + " WeatherEffect 起動てすと！");
-	}
-
 	// 雨が降り始めたら
 	@EventHandler
 	public void RainingEvent(WeatherChangeEvent event) {
@@ -41,27 +31,20 @@ public class RainBreakBlock implements Listener {
 		// 雨が降っている時
 		if (event.toWeatherState()) {
 
-			HashMap<Chunk, Boolean> chunk_list = new HashMap<Chunk, Boolean>();
-
-			for (Chunk ch : world.getLoadedChunks()) {
-				if (!chunk_list.containsKey(ch)) {
-					chunk_list.put(ch, true);
-				} else {
-					plugin.getServer().broadcastMessage("Duplicate task!!!");
-				}
-			}
-
 			// 一つ以上のチャンクが読み込まれている時
-			if (chunk_list.size() > 0) {
+			if (world.getLoadedChunks().length > 0) {
 
 				// 全チャンクに対して
 				int i = 0;
-				for (Entry<Chunk, Boolean> ent : chunk_list.entrySet()) {
-					Chunk key = ent.getKey();
-
+				for (Chunk chunk : world.getLoadedChunks()) {
 					// １0秒毎にランダムで消失
-					new BreakBlocks(plugin, key).runTaskTimerAsynchronously(
-							this.plugin, (long) i * 7, 100L);
+					// new BreakBlocks(plugin,
+					// chunk).runTaskTimerAsynchronously(
+					// this.plugin, (long) i * 7, 100L);
+
+					new BreakBlocks(plugin, chunk).runTaskLater(plugin,
+							(i) + 1L);
+
 					i++;
 				}
 
@@ -69,7 +52,7 @@ public class RainBreakBlock implements Listener {
 		}
 		// 雨以外の天候になった時
 		else {
-			plugin.getServer().broadcastMessage("雨があがりました！");
+			// plugin.getServer().broadcastMessage("雨があがりました！");
 		}
 
 	}

@@ -24,7 +24,7 @@ public class BreakBlocks extends BukkitRunnable {
 	}
 
 	// 実際にchunksに対して消火する処理
-	public synchronized void run() {
+	public void run() {
 
 		if (!chunk.getWorld().hasStorm() || !chunk.isLoaded()) {
 			this.plugin.getServer().getScheduler().cancelTask(this.getTaskId());
@@ -70,7 +70,7 @@ public class BreakBlocks extends BukkitRunnable {
 							break;
 
 						default:
-
+							break loopDown;
 						}
 
 					}
