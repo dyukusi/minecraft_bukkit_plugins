@@ -1,3 +1,7 @@
 name: MyPlugin
 version: 0.0.1
 main: jp.mydns.dyukusi.myplugin.MyPlugin
+commands:
+   mp:
+      description: Main BiomeNotificator base command.
+      usage: /mp demo or kastel
