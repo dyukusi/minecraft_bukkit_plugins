@@ -34,10 +34,10 @@ public class BlockBreakListener implements Listener {
 
 			// undamage
 			if (random < unbreaking_probability) {
-				player.sendMessage("耐久エンチャント発動！");
+//				player.sendMessage("耐久エンチャント発動！");
 				decrease = 0;
 			} else {
-				player.sendMessage(decrease + "のダメージ！");
+//				player.sendMessage(decrease + "のダメージ！");
 			}
 			
 
