@@ -30,7 +30,7 @@ public class BlockBreakListener implements Listener {
 			double unbreaking_probability = plugin.get_unbreaking_effect(hand_item
 					.getEnchantmentLevel(Enchantment.DURABILITY));
 			double random = Math.random();
-			player.sendMessage(random + " :: " + unbreaking_probability);
+//			player.sendMessage(random + " :: " + unbreaking_probability);
 
 			// undamage
 			if (random < unbreaking_probability) {
