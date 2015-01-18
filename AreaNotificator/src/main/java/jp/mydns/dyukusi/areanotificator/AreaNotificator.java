@@ -8,19 +8,24 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import jp.mydns.dyukusi.areanotificator.command.CustomArea;
 import jp.mydns.dyukusi.areanotificator.custominfo.*;
+import jp.mydns.dyukusi.areanotificator.listener.AutomaticAreaDecider;
 import jp.mydns.dyukusi.areanotificator.listener.PlayerLoginOut;
 import jp.mydns.dyukusi.areanotificator.task.Notificator;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
@@ -29,6 +34,7 @@ public class AreaNotificator extends JavaPlugin {
 	private String prefix = ChatColor.LIGHT_PURPLE + "[" + this.getName() + "]";
 
 	private LinkedHashMap<String, CustomAreaInfo> customarea_map;
+	private LinkedList<String> ignore_area;
 
 	final String customarea_path = getDataFolder().getAbsolutePath()
 			+ "/customarea.bin";
@@ -51,6 +57,11 @@ public class AreaNotificator extends JavaPlugin {
 			getLogger().info("config.yml doesn't exist. creating...");
 			this.saveDefaultConfig();
 		}
+
+		// ignore notificate
+		ignore_area = new LinkedList<String>();
+		ignore_area.add(Biome.RIVER.name());
+		
 
 		// get custom area info from serialized file.
 		if (new File(customarea_path).exists()) {
@@ -78,6 +89,8 @@ public class AreaNotificator extends JavaPlugin {
 		// register listner
 		this.getServer().getPluginManager()
 				.registerEvents(new PlayerLoginOut(this), this);
+		this.getServer().getPluginManager()
+				.registerEvents(new AutomaticAreaDecider(this), this);
 
 		// register command
 		this.getCommand("an").setExecutor(new CustomArea(this));
@@ -121,7 +134,7 @@ public class AreaNotificator extends JavaPlugin {
 
 	}
 
-	public String get_current_area_name(Player player) {
+	public String get_current_area_name(Entity player) {
 		int x = player.getLocation().getBlockX();
 		int z = player.getLocation().getBlockZ();
 		CustomAreaInfo custom_area = null;
@@ -156,6 +169,10 @@ public class AreaNotificator extends JavaPlugin {
 
 		String current_biome_name = this.get_current_area_name(player);
 
+		if(ignore_area.contains(current_biome_name)){		
+			return true;
+		}
+		
 		// mix
 		if (current_biome_name.equals(Biome.STONE_BEACH.name())) {
 			current_biome_name = Biome.BEACH.name();
@@ -191,6 +208,24 @@ public class AreaNotificator extends JavaPlugin {
 
 	public void remove_custom_area(String area_name) {
 		this.customarea_map.remove(area_name);
+	}
+
+	public void create_new_area(Location location, int radius, String title,
+			String subtitle) {
+		int x = location.getBlockX();
+		int z = location.getBlockZ();
+
+		Location first = new Location(location.getWorld(), x + radius, 0, z
+				+ radius);
+		Location second = new Location(location.getWorld(), x - radius, 0, z
+				- radius);
+
+		CustomAreaInfo info = new CustomAreaInfo(title, subtitle, first, second);
+
+		// display as subtitle. not creator name
+		info.as_subtitle();
+
+		this.add_new_cutomarea(info);
 	}
 
 }
