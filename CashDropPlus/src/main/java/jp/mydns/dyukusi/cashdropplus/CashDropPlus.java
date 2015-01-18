@@ -11,16 +11,15 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
-
 public class CashDropPlus extends JavaPlugin {
 	private Economy economy = null;
-	private String prefix = ChatColor.YELLOW + "[CashDropPlus]" + ChatColor.WHITE;
-	private HashMap<EntityType, Integer> base_reward_map;
+	private String prefix = ChatColor.YELLOW + "[CashDropPlus]"
+			+ ChatColor.WHITE;
+	private HashMap<String, Integer> base_reward_map;
 	private HashMap<Enchantment, HashMap<Integer, Integer>> ench_effect_map;
 
 	@Override
@@ -36,8 +35,9 @@ public class CashDropPlus extends JavaPlugin {
 		}
 
 		// config
-		if (!new File(this.getDataFolder().getAbsolutePath() + "/config.yml").exists()) {
-			getLogger().info("config.ymlが存在しないため、生成します。");
+		if (!new File(this.getDataFolder().getAbsolutePath() + "/config.yml")
+				.exists()) {
+			getLogger().info("creating config.yml file...");
 			this.saveDefaultConfig();
 		}
 
@@ -48,15 +48,14 @@ public class CashDropPlus extends JavaPlugin {
 		}
 
 		// base reward
-		this.base_reward_map = new HashMap<EntityType, Integer>();
+		this.base_reward_map = new HashMap<String, Integer>();
 		List<String> list = this.getConfig().getStringList("base_reward");
 
 		for (String str : list) {
 			String array[] = str.split(",");
-			EntityType type = EntityType.valueOf(array[0]);
+			// EntityType type = EntityType.valueOf(array[0]);
 			int exp = Integer.parseInt(array[1]);
-
-			base_reward_map.put(type, exp);
+			base_reward_map.put(array[0], exp);
 		}
 
 		// enchantment effect
@@ -78,7 +77,8 @@ public class CashDropPlus extends JavaPlugin {
 		}
 
 		// listener register
-		this.getServer().getPluginManager().registerEvents(new DropMoney(this, this.economy), this);
+		this.getServer().getPluginManager()
+				.registerEvents(new DropMoney(this, this.economy), this);
 	}
 
 	@Override
@@ -87,8 +87,9 @@ public class CashDropPlus extends JavaPlugin {
 	}
 
 	boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
-				net.milkbowl.vault.economy.Economy.class);
+		RegisteredServiceProvider<Economy> economyProvider = getServer()
+				.getServicesManager().getRegistration(
+						net.milkbowl.vault.economy.Economy.class);
 
 		if (economyProvider != null) {
 			this.economy = economyProvider.getProvider();
@@ -96,11 +97,12 @@ public class CashDropPlus extends JavaPlugin {
 		return (economy != null);
 	}
 
-	public int get_base_reward(EntityType type) {
+	public int get_base_reward(String type) {
 		if (this.base_reward_map.containsKey(type))
 			return this.base_reward_map.get(type);
-		else
+		else {
 			return 0;
+		}
 	}
 
 	public String get_prefix() {
@@ -115,7 +117,8 @@ public class CashDropPlus extends JavaPlugin {
 			Enchantment enchant = ent.getKey();
 			int level = ent.getValue();
 
-			if (this.ench_effect_map.containsKey(enchant) && this.ench_effect_map.get(enchant).containsKey(level)) {
+			if (this.ench_effect_map.containsKey(enchant)
+					&& this.ench_effect_map.get(enchant).containsKey(level)) {
 				int temp = this.ench_effect_map.get(enchant).get(level);
 				if (result < temp) {
 					result = temp;
