@@ -4,7 +4,7 @@ main: jp.mydns.dyukusi.craftlevel.CraftLevel
 commands:
    cl:
       description: Main CraftLevel base command.
-      usage: /cl
+      usage: /cl status PlayerName(optional)
 permissions:
    craftlevel.status:
        description: Display current craft level and craft experience.
