@@ -57,6 +57,7 @@ public class DropMoney implements Listener {
 
 				case SKELETON:
 					monster_name = SkeletonIdentifier((Skeleton) monster);
+					break;
 
 				default:
 					monster_name = monster.getType().name();
@@ -93,10 +94,13 @@ public class DropMoney implements Listener {
 	}
 
 	private String SkeletonIdentifier(Skeleton skeleton) {
+
 		if (skeleton.getSkeletonType().equals(SkeletonType.NORMAL))
 			return "SKELETON";
+
 		else
 			return "WITHER_SKELETON";
+
 	}
 
 	private String GuardianIdentifier(Guardian guardian) {
