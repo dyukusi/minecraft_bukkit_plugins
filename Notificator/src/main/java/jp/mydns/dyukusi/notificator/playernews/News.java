@@ -3,6 +3,7 @@ package jp.mydns.dyukusi.notificator.playernews;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class News implements Serializable {
@@ -11,13 +12,9 @@ public class News implements Serializable {
 	private Integer[] time;
 	private String message;
 
-	public News(String player_name, String msg) {
+	public News(Integer[] time, String player_name, String msg) {
 		this.who = player_name;
-
-		Calendar cl = Calendar.getInstance();
-		this.time = new Integer[] { cl.get(Calendar.YEAR), cl.get(Calendar.MONTH)+1, cl.get(Calendar.DATE),
-				cl.get(Calendar.AM_PM), cl.get(Calendar.HOUR), cl.get(Calendar.MINUTE) };
-
+		this.time = time;
 		this.message = msg;
 	}
 
@@ -35,5 +32,12 @@ public class News implements Serializable {
 
 	public String get_time_str() {
 		return time[0] + "-" + time[1] + "-" + time[2];
+	}
+
+	@Override
+	public String toString() {
+		return ChatColor.GRAY + "[" + this.get_time_str() + "]"
+				+ ChatColor.GOLD + this.get_who() + ChatColor.WHITE + ": "
+				+ this.get_message();
 	}
 }

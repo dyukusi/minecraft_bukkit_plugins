@@ -4,6 +4,11 @@ main: jp.mydns.dyukusi.notificator.Notificator
 commands:
    noti:
       description: Notification command.
-      usage: /noti pnews [News Message]
-      permission: Notification.pnews
+      usage: /noti help
       permission-message: You don't have <permission>
+permissions:
+   notificator.add:
+       description: Add new player news by paying charge.
+   notificator.delete:
+       description: Delete specific player message by selecting index.
+      

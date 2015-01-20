@@ -15,14 +15,17 @@ public class Notification extends BukkitRunnable {
 	boolean isBroadcast;
 	Player player;
 	List<News> news_list;
+	int player_news_limit;
 
-	public Notification(Notificator notificator, boolean isServer_news, boolean isBroadcast, Player player,
-			List<News> news_list) {
+	public Notification(Notificator notificator, boolean isServer_news,
+			boolean isBroadcast, Player player, List<News> news_list,
+			int pnews_limit) {
 		this.plugin = notificator;
 		this.isServer_news = isServer_news;
 		this.isBroadcast = isBroadcast;
 		this.player = player;
 		this.news_list = news_list;
+		this.player_news_limit = pnews_limit;
 	}
 
 	public void run() {
@@ -40,7 +43,8 @@ public class Notification extends BukkitRunnable {
 					if (isBroadcast) {
 						plugin.getServer().broadcastMessage(header);
 						for (News news : news_list) {
-							plugin.getServer().broadcastMessage(news.get_message());
+							plugin.getServer().broadcastMessage(
+									news.get_message());
 						}
 					}
 					// send to player
@@ -54,23 +58,29 @@ public class Notification extends BukkitRunnable {
 				}
 				// player news
 				else {
-					header = ChatColor.AQUA + "---- Player News ----";
+					header = ChatColor.BLUE + "---- Player News ----";
 
 					// broadcast
 					if (isBroadcast) {
 						plugin.getServer().broadcastMessage(header);
-						for (News news : news_list) {
-							plugin.getServer().broadcastMessage(
-									ChatColor.GRAY + "[" + news.get_time_str() + "]" + ChatColor.GOLD + news.get_who()
-											+ ChatColor.WHITE + ": " + news.get_message());
+						for (int i = 0; i < player_news_limit
+								&& i < news_list.size(); i++) {
+							News news = news_list.get(i);
+
+							plugin.getServer()
+									.broadcastMessage(news.toString());
+
 						}
 					}
 					// send to player
 					else {
 						player.sendMessage(header);
-						for (News news : news_list) {
-							player.sendMessage(ChatColor.GRAY + "[" + news.get_time_str() + "]" + ChatColor.GOLD
-									+ news.get_who() + ChatColor.WHITE + ": " + news.get_message());
+						for (int i = 0; i < player_news_limit
+								&& i < news_list.size(); i++) {
+							News news = news_list.get(i);
+
+							player.sendMessage(news.toString());
+
 						}
 					}
 

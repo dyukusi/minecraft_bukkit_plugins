@@ -1,8 +1,11 @@
 #Notificator config file by Dyukusi ( dyukusin@gmail.com )
 
-#notification interval( 0 : notify only at login , n : notify per n min );
-server_news_interval: 15
-player_news_interval: 15
+#Automatic notification interval( 0 : notify only at login , n : notify per n min );
+server_news_interval: 60
+player_news_interval: 60
+
+#How amount of messages will display when automatic notify event.
+player_news_display_limit: 5
 
 #player news character count limit
 player_news_char_limit: 80

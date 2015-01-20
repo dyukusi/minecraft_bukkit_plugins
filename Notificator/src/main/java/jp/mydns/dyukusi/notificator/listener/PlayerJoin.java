@@ -16,8 +16,8 @@ public class PlayerJoin implements Listener {
 	}
 
 	@EventHandler
-	void PlayerJoin(PlayerJoinEvent event) {
-		new Notification(plugin, true, false, event.getPlayer(), plugin.get_server_news()).runTask(plugin);
-		new Notification(plugin, false, false, event.getPlayer(), plugin.get_player_news()).runTask(plugin);
+	void PlayerJoinEvent(PlayerJoinEvent event) {
+		new Notification(plugin, true, false, event.getPlayer(), plugin.get_server_news(),plugin.get_player_news_display_limit()).runTask(plugin);
+		new Notification(plugin, false, false, event.getPlayer(), plugin.get_player_news(),plugin.get_player_news_display_limit()).runTask(plugin);
 	}
 }
