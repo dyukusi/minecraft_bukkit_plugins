@@ -51,7 +51,6 @@ public class GrowEvent implements Listener {
 		// Cocoa
 		else if (type.equals(Material.COCOA)) {
 			if (event.getNewState().getData().getData() >= 8) {
-				plugin.getServer().broadcastMessage(type + " : isRipe.");
 				isRipe = true;
 			}
 		}
