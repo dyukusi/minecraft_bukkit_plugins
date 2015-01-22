@@ -1,15 +1,25 @@
 package jp.mydns.dyukusi.craftlevel;
 
+import java.awt.Container;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.UUID;
 
 import jp.mydns.dyukusi.craftlevel.command.BasicCommands;
@@ -27,20 +37,26 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.junit.experimental.theories.Theories;
 import org.mcstats.Metrics;
+
+import com.avaje.ebeaninternal.server.core.ConfigBuilder;
 
 public class CraftLevel extends JavaPlugin {
 	private String prefix = ChatColor.GREEN + "[CraftLevel]" + ChatColor.WHITE;
-	public String character_data_path = getDataFolder().getAbsolutePath() + "/characterlevel.bin";
+	public String character_data_path = getDataFolder().getAbsolutePath()
+			+ "/characterlevel.bin";
 	private HashMap<Material, RequirementInformation> requirements;
 	private HashMap<UUID, PlayerCraftLevelData> player_crafting_level;
 	private HashMap<Material, Integer> experience;
 	private int next_level_exp[];
-	private int minimum_success_rate, maximum_success_rate, increase_rate, max_craft_level;
+	private int minimum_success_rate, maximum_success_rate, increase_rate,
+			max_craft_level;
 	boolean no_requirements_data_error;
 
 	@Override
-	public void onEnable() {		
+	public void onEnable() {
+
 		// mcstats
 		try {
 			Metrics metrics = new Metrics(this);
@@ -51,13 +67,15 @@ public class CraftLevel extends JavaPlugin {
 		}
 
 		// config
-		if (!new File(this.getDataFolder().getAbsolutePath() + "/config.yml").exists()) {
+		if (!new File(this.getDataFolder().getAbsolutePath() + "/config.yml")
+				.exists()) {
 			getLogger().info("config.yml doesn't exist. creating...");
 			this.saveDefaultConfig();
 		}
 
 		// Config
-		no_requirements_data_error = getConfig().getBoolean("no_requirements_data_error");
+		no_requirements_data_error = getConfig().getBoolean(
+				"no_requirements_data_error");
 		minimum_success_rate = getConfig().getInt("minimum_success_rate");
 		maximum_success_rate = getConfig().getInt("maximum_success_rate");
 		increase_rate = getConfig().getInt("increase_rate");
@@ -90,13 +108,13 @@ public class CraftLevel extends JavaPlugin {
 
 			if (array.length >= 3) {
 				custom_maximum_success_rate = Integer.parseInt(array[2]);
-				getLogger().info(
-						"############################################################################################################"
+				getLogger()
+						.info("############################################################################################################"
 								+ custom_maximum_success_rate);
 			}
 
-			requirements
-					.put(material, new RequirementInformation(material, require_level, custom_maximum_success_rate));
+			requirements.put(material, new RequirementInformation(material,
+					require_level, custom_maximum_success_rate));
 		}
 
 		// exp, material
@@ -113,8 +131,10 @@ public class CraftLevel extends JavaPlugin {
 		// get player craft level config
 		if (new File(character_data_path).exists()) {
 			try {
-				ObjectInputStream objinput = new ObjectInputStream(new FileInputStream(character_data_path));
-				this.player_crafting_level = (HashMap<UUID, PlayerCraftLevelData>) objinput.readObject();
+				ObjectInputStream objinput = new ObjectInputStream(
+						new FileInputStream(character_data_path));
+				this.player_crafting_level = (HashMap<UUID, PlayerCraftLevelData>) objinput
+						.readObject();
 				objinput.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -126,22 +146,88 @@ public class CraftLevel extends JavaPlugin {
 		}
 		// no save data
 		else {
-			getLogger().info("characterlevel.bin was not found. Creating new data...");
+			getLogger().info(
+					"characterlevel.bin was not found. Creating new data...");
 			player_crafting_level = new HashMap<UUID, PlayerCraftLevelData>();
 		}
 
 		// register listeners
-		this.getServer().getPluginManager().registerEvents(new CraftingItem(this), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerLogin(this), this);
+		this.getServer().getPluginManager()
+				.registerEvents(new CraftingItem(this), this);
+		this.getServer().getPluginManager()
+				.registerEvents(new PlayerLogin(this), this);
 
 		// register commands
 		getCommand("cl").setExecutor(new BasicCommands(this));
+
+		try {
+			out_new_config();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void out_new_config() throws IOException {
+		File file = new File(getDataFolder().getAbsolutePath()
+				+ "/new_config.txt");
+		PrintWriter pw = new PrintWriter(new BufferedWriter(
+				new FileWriter(file)));
+
+		LinkedList<new_config_info> list = new LinkedList<new_config_info>();
+
+		pw.println("material_info");
+
+		for (Material material : Material.values()) {
+
+			if (material != null) {
+
+				int level_requirement;
+				int base_experience;
+
+				if (this.requirements.containsKey(material)) {
+					level_requirement = this.requirements.get(material)
+							.get_require_level();
+				} else {
+					level_requirement = 0;
+				}
+
+				if (this.experience.containsKey(material)) {
+					base_experience = this.experience.get(material);
+				} else {
+					base_experience = 0;
+				}
+
+				if (level_requirement != 0 || base_experience != 0) {
+					// - Material, LevelRequirement, BaseExperience, Option
+					String str = " - " + material.name() + ","
+							+ level_requirement + "," + base_experience
+							+ ",none";
+
+					list.add(new new_config_info(material.name(), str));
+				}
+
+			} else {
+				// pw.println(" - not found data");
+			}
+
+		}
+		
+		Collections.sort(list);
+		
+		for(new_config_info con : list){
+			pw.println(con.str);
+		}
+
+		pw.close();
+		
 	}
 
 	@Override
 	public void onDisable() {
 		try {
-			ObjectOutputStream objoutput = new ObjectOutputStream(new FileOutputStream(character_data_path));
+			ObjectOutputStream objoutput = new ObjectOutputStream(
+					new FileOutputStream(character_data_path));
 			objoutput.writeObject(this.player_crafting_level);
 			objoutput.close();
 		} catch (FileNotFoundException e) {
@@ -158,7 +244,8 @@ public class CraftLevel extends JavaPlugin {
 
 		int success_rate = this.minimum_success_rate;
 		if (level >= require_level) {
-			success_rate += increase_rate + (increase_rate * (level - require_level));
+			success_rate += increase_rate
+					+ (increase_rate * (level - require_level));
 		}
 
 		int maximum_success_rate;
@@ -197,7 +284,8 @@ public class CraftLevel extends JavaPlugin {
 	}
 
 	public void put_new_player_to_crafting_level_info(Player player) {
-		this.player_crafting_level.put(player.getUniqueId(), new PlayerCraftLevelData(player));
+		this.player_crafting_level.put(player.getUniqueId(),
+				new PlayerCraftLevelData(player));
 	}
 
 	public int[] get_next_level_exp() {
@@ -246,8 +334,10 @@ public class CraftLevel extends JavaPlugin {
 		}
 		// undefined instance
 		else {
-			this.getServer().broadcastMessage(
-					this.get_prefix() + " undefined recipe instance. please tell Dyukusi to fix this bug.");
+			this.getServer()
+					.broadcastMessage(
+							this.get_prefix()
+									+ " undefined recipe instance. please tell Dyukusi to fix this bug.");
 			return 0;
 		}
 
@@ -256,9 +346,12 @@ public class CraftLevel extends JavaPlugin {
 			if (this.experience.containsKey(material)) {
 				exp += this.experience.get(material);
 			} else {
-				this.getServer().broadcastMessage(
-						this.get_prefix() + ChatColor.RED + material.toString()
-								+ " has been not supported yet. need to add this item into config file.");
+				this.getServer()
+						.broadcastMessage(
+								this.get_prefix()
+										+ ChatColor.RED
+										+ material.toString()
+										+ " has been not supported yet. need to add this item into config file.");
 				exp = 0;
 
 			}
@@ -272,9 +365,11 @@ public class CraftLevel extends JavaPlugin {
 			return this.requirements.get(material);
 		else {
 			if (this.no_requirements_data_error) {
-				getServer().broadcastMessage(
-						this.get_prefix() + material.name()
-								+ " doesn't have requirements data. please contact server owner to fix");
+				getServer()
+						.broadcastMessage(
+								this.get_prefix()
+										+ material.name()
+										+ " doesn't have requirements data. please contact server owner to fix");
 			}
 			return new RequirementInformation(material, 1, -1);
 		}
