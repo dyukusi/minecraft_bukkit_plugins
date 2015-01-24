@@ -78,7 +78,7 @@ public class CraftingItem implements Listener {
 					}
 				}
 
-				new GainExperience(plugin, creater, false, event.getRecipe())
+				new GainExperience(plugin, creater, false, event.getRecipe(),material_info.get_material())
 						.runTask(plugin);
 
 			}
@@ -90,7 +90,7 @@ public class CraftingItem implements Listener {
 				creater.sendMessage(Message.Craft_Success
 						.get_message(craft_item_name));
 			
-				new GainExperience(plugin, creater, true, event.getRecipe())
+				new GainExperience(plugin, creater, true, event.getRecipe(),material_info.get_material())
 						.runTask(plugin);
 			}
 

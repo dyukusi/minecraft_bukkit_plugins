@@ -5,7 +5,6 @@ import jp.mydns.dyukusi.craftlevel.config.Message;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.craftlevel.materialinfo.MaterialInfo;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,18 +18,19 @@ public class GainExperience extends BukkitRunnable {
 	MaterialInfo material_info;
 	Recipe recipe;
 	PlayerCraftLevelData pinfo;
+	Material result;
 
 	public GainExperience(CraftLevel PLUGIN, Player PLAYER, boolean SUCCESS,
-			Recipe RECIPE) {
+			Recipe RECIPE,Material RESULT) {
 		this.plugin = PLUGIN;
 		this.player = PLAYER;
 		this.success = SUCCESS;
 		this.recipe = RECIPE;
-		this.material_info = CraftLevel.get_material_info(recipe.getResult()
-				.getType());
+		this.material_info = CraftLevel.get_material_info(RESULT);
 	}
 
 	public void run() {
+		
 
 		this.pinfo = plugin.get_player_crafting_level_info(player);
 
@@ -47,7 +47,12 @@ public class GainExperience extends BukkitRunnable {
 			// failure
 			if (!success) {
 				gain_exp *= material_info.get_success_rate(pinfo.get_level());
-			}
+			}			
+	
+			
+			if(material_info.get_custom_experience() >= 0){
+				gain_exp = material_info.get_custom_experience();
+			}				
 
 			if (gain_exp > 0) {
 

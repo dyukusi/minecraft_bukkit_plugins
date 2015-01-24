@@ -13,11 +13,12 @@ public class PlayerCraftLevelData implements Serializable {
 	private int level;
 	private int exp;
 
-	public PlayerCraftLevelData(Player p) {
-		this.uuid = p.getUniqueId();
-		this.name = p.getName();
-		this.level = 1;
-		this.exp = 0;
+	public PlayerCraftLevelData(UUID uuid, String player_name, int level,
+			int exp) {
+		this.uuid = uuid;
+		this.name = player_name;
+		this.level = level;
+		this.exp = exp;
 	}
 
 	public UUID get_uuid() {

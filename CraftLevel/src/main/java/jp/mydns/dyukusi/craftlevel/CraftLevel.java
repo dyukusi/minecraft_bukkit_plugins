@@ -1,14 +1,19 @@
 package jp.mydns.dyukusi.craftlevel;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,9 +23,11 @@ import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.craftlevel.listener.CraftingItem;
 import jp.mydns.dyukusi.craftlevel.listener.PlayerLogin;
 import jp.mydns.dyukusi.craftlevel.materialinfo.MaterialInfo;
+import jp.mydns.dyukusi.craftlevel.task.SavePlayerCLdata;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -29,7 +36,7 @@ public class CraftLevel extends JavaPlugin {
 	private static String prefix = ChatColor.GREEN + "[CraftLevel]"
 			+ ChatColor.WHITE;
 	public String character_data_path = getDataFolder().getAbsolutePath()
-			+ "/characterlevel.bin";
+			+ "/characterlevel.txt";
 
 	private HashMap<UUID, PlayerCraftLevelData> player_crafting_level;
 	private static HashMap<Material, MaterialInfo> material_info;
@@ -38,6 +45,7 @@ public class CraftLevel extends JavaPlugin {
 	private static int next_level_exp[];
 	private static int minimum_success_rate, maximum_success_rate,
 			increase_rate, max_craft_level;
+	private int backup_per;
 	boolean no_requirements_data_error;
 
 	@Override
@@ -65,6 +73,7 @@ public class CraftLevel extends JavaPlugin {
 		maximum_success_rate = getConfig().getInt("maximum_success_rate");
 		increase_rate = getConfig().getInt("increase_rate");
 		max_craft_level = getConfig().getInt("max_craft_level");
+		backup_per = getConfig().getInt("backup");
 
 		message = new HashMap<Message, String>();
 		// Message
@@ -99,27 +108,43 @@ public class CraftLevel extends JavaPlugin {
 			this.material_info.put(info.get_material(), info);
 		}
 
+		player_crafting_level = new HashMap<UUID, PlayerCraftLevelData>();
+
 		// get player craft level config
 		if (new File(character_data_path).exists()) {
+			Scanner sc = null;
 			try {
-				ObjectInputStream objinput = new ObjectInputStream(
-						new FileInputStream(character_data_path));
-				this.player_crafting_level = (HashMap<UUID, PlayerCraftLevelData>) objinput
-						.readObject();
-				objinput.close();
+				sc = new Scanner(new File(character_data_path));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
+
+			if (sc != null) {
+				while (sc.hasNextLine()) {
+					String[] data = sc.nextLine().split(",");
+
+					if (data[0].charAt(0) == '#')
+						continue;
+
+					String name = data[0];
+					OfflinePlayer player = getServer().getOfflinePlayer(name);
+					UUID uuid = player.getUniqueId();
+					int craft_level = Integer.parseInt(data[1]);
+					int craft_exp = Integer.parseInt(data[2]);
+
+					this.player_crafting_level.put(uuid,
+							new PlayerCraftLevelData(uuid, name, craft_level,
+									craft_exp));
+				}
+			}
+
+			sc.close();
+
 		}
 		// no save data
 		else {
 			getLogger().info(
-					"characterlevel.bin was not found. Creating new data...");
-			player_crafting_level = new HashMap<UUID, PlayerCraftLevelData>();
+					"characterlevel.txt was not found. Creating new data...");
 		}
 
 		// register listeners
@@ -131,30 +156,31 @@ public class CraftLevel extends JavaPlugin {
 		// register commands
 		getCommand("cl").setExecutor(new BasicCommands(this));
 
+		// backup task
+		if (backup_per > 0) {
+			new SavePlayerCLdata(this, this.player_crafting_level,
+					character_data_path + ".backup").runTaskTimer(this, 0,
+					20 * 60 * backup_per);
+		}
 	}
 
 	@Override
 	public void onDisable() {
-		try {
-			ObjectOutputStream objoutput = new ObjectOutputStream(
-					new FileOutputStream(character_data_path));
-			objoutput.writeObject(this.player_crafting_level);
-			objoutput.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		new SavePlayerCLdata(this, this.player_crafting_level,
+				character_data_path).run();
 	}
 
 	public PlayerCraftLevelData get_player_crafting_level_info(Player player) {
 		if (this.player_crafting_level.containsKey(player.getUniqueId())) {
 			return this.player_crafting_level.get(player.getUniqueId());
 		} else {
-			
-			player.sendMessage(ChatColor.RED+" You haven't CraftLevel data. Creating new data...");
-			this.player_crafting_level.put(player.getUniqueId(),
-					new PlayerCraftLevelData(player));
+
+			player.sendMessage(ChatColor.RED
+					+ " You haven't CraftLevel data. Creating new data...");
+			this.player_crafting_level.put(
+					player.getUniqueId(),
+					new PlayerCraftLevelData(player.getUniqueId(), player
+							.getName(), 1, 0));
 
 			return this.player_crafting_level.get(player.getUniqueId());
 		}
@@ -166,7 +192,8 @@ public class CraftLevel extends JavaPlugin {
 
 	public void put_new_player_to_crafting_level_info(Player player) {
 		this.player_crafting_level.put(player.getUniqueId(),
-				new PlayerCraftLevelData(player));
+				new PlayerCraftLevelData(player.getUniqueId(),
+						player.getName(), 1, 0));
 	}
 
 	static public int[] get_next_level_exp() {
@@ -233,7 +260,7 @@ public class CraftLevel extends JavaPlugin {
 				case "none":
 					break;
 				default:
-					getLogger().info(split[0] + " is not difined as Option.");
+
 					break;
 				}
 			}

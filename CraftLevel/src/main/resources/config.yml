@@ -15,6 +15,9 @@ no_requirements_data_error: true
 #Max craft level
 max_craft_level: 50
 
+#Frequency(min) of backup player's craft level & exp data. 0 = disable
+backup: 60
+
 #Message config
 # §0:Black, §1:DarkBlue, §2:DarkGreen, §3:DarkAqua, §4:DarkRed, §5:Purple, §6:Gold,  §7:Gray, 
 # §8:DarkGray, §9:Blue, §a:Green, §b:Aqua, §c:Red, §d:LightPurple, §e:Yellow,  §f:White
@@ -27,10 +30,10 @@ message:
   Craft_Failure: ^c§cのクラフトに失敗した！ ^n§b< You failed to craft §f^c §b>
   
   # ^g:GainExperience, ^n:CurrentExp, ^l:RequireExpForNextLevel, ^s:SuccessRate
-  Craft_Gain_Experience: §a+^g  §fEXP： §6^c§f/^l  §eSuccess rate： §6^s§f
+  Craft_Gain_Experience: §a+^g  §fEXP： §6^c§f/^l  §eSuccess rate： §6^s§f%
   
   # ^p:PlayerName, ^b:BeforeLevel, ^a:NewLevel
-  Craft_Levelup: §f^p ： §gLv §6^b §f-> §6^a
+  Craft_Levelup: §f^p ： §aLv §6^b §f-> §6^a
     
   Error_Shift: §c現状ではクリックによるクラフトのみ対応しています。 ^n§b< Sorry, Crafting with click is only usable from now. >
 
@@ -377,5 +380,5 @@ material_info:
  - WOOD_SWORD,1,0,none
  - WOOL,10,75,none
  - WORKBENCH,1,0,none
- - WRITTEN_BOOK,20,0,none
+ - WRITTEN_BOOK,20,0,FSR:100,CEX:0
  - YELLOW_FLOWER,0,11,none

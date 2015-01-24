@@ -1,6 +1,6 @@
 #CraftLevel by Dyukusi( dyukusin@gmail.com )
 
-#Minimum craft success rate( 0-100% )
+#Default Minimum craft success rate( 0-100% )
 minimum_success_rate: 15
 
 #Default maximum craft success rate( 0-100% )
