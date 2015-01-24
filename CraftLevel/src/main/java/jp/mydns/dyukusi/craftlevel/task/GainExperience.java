@@ -1,8 +1,9 @@
 package jp.mydns.dyukusi.craftlevel.task;
 
 import jp.mydns.dyukusi.craftlevel.CraftLevel;
+import jp.mydns.dyukusi.craftlevel.config.Message;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
-import jp.mydns.dyukusi.craftlevel.requireinfo.RequirementInformation;
+import jp.mydns.dyukusi.craftlevel.materialinfo.MaterialInfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,57 +16,57 @@ public class GainExperience extends BukkitRunnable {
 	CraftLevel plugin;
 	Player player;
 	boolean success;
-	Material material;
+	MaterialInfo material_info;
 	Recipe recipe;
-	PlayerCraftLevelData pinf;
-	RequirementInformation reqinf;
+	PlayerCraftLevelData pinfo;
 
-	public GainExperience(CraftLevel PLUGIN, Player PLAYER, boolean SUCCESS, Recipe RECIPE) {
+	public GainExperience(CraftLevel PLUGIN, Player PLAYER, boolean SUCCESS,
+			Recipe RECIPE) {
 		this.plugin = PLUGIN;
 		this.player = PLAYER;
 		this.success = SUCCESS;
 		this.recipe = RECIPE;
-		this.material = recipe.getResult().getType();
+		this.material_info = CraftLevel.get_material_info(recipe.getResult()
+				.getType());
 	}
 
 	public void run() {
 
-		this.pinf = plugin.get_player_crafting_level_info(player);
+		this.pinfo = plugin.get_player_crafting_level_info(player);
 
 		// lower than max level
-		if (pinf.get_level() < plugin.get_max_craft_level()) {
+		if (pinfo.get_level() < CraftLevel.get_max_craft_level()) {
 
-			this.reqinf = plugin.get_require_info(material);
-
-			double failure_rate = 1.0 - plugin.get_success_rate(pinf.get_level(), material);
+			double failure_rate = 1.0 - material_info.get_success_rate(pinfo
+					.get_level());
 			int gain_exp;
 
 			// success
-			gain_exp = (int) (plugin.calc_success_exp(recipe) * failure_rate);
+			gain_exp = (int) (material_info.get_success_exp(recipe) * failure_rate);
 
 			// failure
 			if (!success) {
-				gain_exp *= plugin.get_success_rate(pinf.get_level(), material);
+				gain_exp *= material_info.get_success_rate(pinfo.get_level());
 			}
 
 			if (gain_exp > 0) {
 
-				boolean levelup = pinf.gain_exp(gain_exp, plugin.get_next_level_exp(), plugin.get_max_craft_level());
+				boolean levelup = pinfo.gain_exp(gain_exp,
+						plugin.get_next_level_exp(),
+						CraftLevel.get_max_craft_level());
 
-				player.sendMessage(ChatColor.GREEN + "+" + gain_exp + "   " + ChatColor.WHITE + "EXP: "
-						+ ChatColor.GOLD + pinf.get_exp() + ChatColor.WHITE + "/"
-						+ plugin.get_next_level_exp()[pinf.get_level()] + ChatColor.WHITE + "  Success rate: "
-						+ ChatColor.GOLD + (plugin.get_success_rate(pinf.get_level(), material) * 100)
-						+ ChatColor.WHITE + "%");
+				player.sendMessage(Message.Craft_Gain_Experience.get_message(
+						gain_exp,
+						pinfo.get_exp(),
+						CraftLevel.get_next_level_exp()[pinfo.get_level()],
+						(int) (material_info.get_success_rate(pinfo.get_level()) * 100)));
 
 				// level up
 				if (levelup) {
-					plugin.getServer().broadcastMessage(
-							plugin.get_prefix() + " " + player.getName() + " : " + ChatColor.WHITE + "Lv "
-									+ ChatColor.GOLD + (pinf.get_level() - 1) + ChatColor.WHITE + " -> "
-									+ ChatColor.GOLD + pinf.get_level());
-
-					player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0.5F);
+					
+					plugin.getServer().broadcastMessage(Message.Craft_Levelup.get_message(player.getName(),pinfo.get_level()));
+					player.playSound(player.getLocation(), Sound.LEVEL_UP, 1,
+							0.5F);
 				}
 
 			}

@@ -1,57 +1,43 @@
 package jp.mydns.dyukusi.craftlevel;
 
-import java.awt.Container;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 
 import jp.mydns.dyukusi.craftlevel.command.BasicCommands;
+import jp.mydns.dyukusi.craftlevel.config.Message;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.craftlevel.listener.CraftingItem;
 import jp.mydns.dyukusi.craftlevel.listener.PlayerLogin;
-import jp.mydns.dyukusi.craftlevel.requireinfo.RequirementInformation;
-import jp.mydns.dyukusi.seasonalfood.Title;
+import jp.mydns.dyukusi.craftlevel.materialinfo.MaterialInfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.experimental.theories.Theories;
 import org.mcstats.Metrics;
 
-import com.avaje.ebeaninternal.server.core.ConfigBuilder;
-
 public class CraftLevel extends JavaPlugin {
-	private String prefix = ChatColor.GREEN + "[CraftLevel]" + ChatColor.WHITE;
+	private static String prefix = ChatColor.GREEN + "[CraftLevel]"
+			+ ChatColor.WHITE;
 	public String character_data_path = getDataFolder().getAbsolutePath()
 			+ "/characterlevel.bin";
-	private HashMap<Material, RequirementInformation> requirements;
+
 	private HashMap<UUID, PlayerCraftLevelData> player_crafting_level;
-	private HashMap<Material, Integer> experience;
-	private int next_level_exp[];
-	private int minimum_success_rate, maximum_success_rate, increase_rate,
-			max_craft_level;
+	private static HashMap<Material, MaterialInfo> material_info;
+	private static HashMap<Message, String> message;
+
+	private static int next_level_exp[];
+	private static int minimum_success_rate, maximum_success_rate,
+			increase_rate, max_craft_level;
 	boolean no_requirements_data_error;
 
 	@Override
@@ -73,13 +59,24 @@ public class CraftLevel extends JavaPlugin {
 			this.saveDefaultConfig();
 		}
 
-		// Config
 		no_requirements_data_error = getConfig().getBoolean(
 				"no_requirements_data_error");
 		minimum_success_rate = getConfig().getInt("minimum_success_rate");
 		maximum_success_rate = getConfig().getInt("maximum_success_rate");
 		increase_rate = getConfig().getInt("increase_rate");
 		max_craft_level = getConfig().getInt("max_craft_level");
+
+		message = new HashMap<Message, String>();
+		// Message
+		Set<String> keys = getConfig().getConfigurationSection("message")
+				.getKeys(false);
+
+		for (String key : keys) {
+			String value = getConfig().getConfigurationSection("message")
+					.getString(key);
+
+			message.put(Message.valueOf(key), value);
+		}
 
 		String array[];
 
@@ -94,38 +91,12 @@ public class CraftLevel extends JavaPlugin {
 			next_level_exp[level] = require_exp;
 		}
 
-		// require_level, material, maximum_success_rate0~100% (option)
-		requirements = new HashMap<Material, RequirementInformation>();
-		Material material;
-		int require_level;
-		int custom_maximum_success_rate;
-		for (String str : getConfig().getStringList("requirements")) {
-			custom_maximum_success_rate = -1;
+		this.material_info = new HashMap<Material, MaterialInfo>();
+		List<String> minfo_list = getConfig().getStringList("material_info");
 
-			array = str.split(",");
-			require_level = Integer.parseInt(array[0]);
-			material = Material.getMaterial(array[1]);
-
-			if (array.length >= 3) {
-				custom_maximum_success_rate = Integer.parseInt(array[2]);
-				getLogger()
-						.info("############################################################################################################"
-								+ custom_maximum_success_rate);
-			}
-
-			requirements.put(material, new RequirementInformation(material,
-					require_level, custom_maximum_success_rate));
-		}
-
-		// exp, material
-		experience = new HashMap<Material, Integer>();
-		int exp;
-		for (String str : getConfig().getStringList("experience")) {
-			array = str.split(",");
-			exp = Integer.parseInt(array[0]);
-			material = Material.getMaterial(array[1]);
-
-			experience.put(material, exp);
+		for (String data : minfo_list) {
+			MaterialInfo info = this.decode_material_info_str(data);
+			this.material_info.put(info.get_material(), info);
 		}
 
 		// get player craft level config
@@ -160,67 +131,6 @@ public class CraftLevel extends JavaPlugin {
 		// register commands
 		getCommand("cl").setExecutor(new BasicCommands(this));
 
-		try {
-			out_new_config();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private void out_new_config() throws IOException {
-		File file = new File(getDataFolder().getAbsolutePath()
-				+ "/new_config.txt");
-		PrintWriter pw = new PrintWriter(new BufferedWriter(
-				new FileWriter(file)));
-
-		LinkedList<new_config_info> list = new LinkedList<new_config_info>();
-
-		pw.println("material_info");
-
-		for (Material material : Material.values()) {
-
-			if (material != null) {
-
-				int level_requirement;
-				int base_experience;
-
-				if (this.requirements.containsKey(material)) {
-					level_requirement = this.requirements.get(material)
-							.get_require_level();
-				} else {
-					level_requirement = 0;
-				}
-
-				if (this.experience.containsKey(material)) {
-					base_experience = this.experience.get(material);
-				} else {
-					base_experience = 0;
-				}
-
-				if (level_requirement != 0 || base_experience != 0) {
-					// - Material, LevelRequirement, BaseExperience, Option
-					String str = " - " + material.name() + ","
-							+ level_requirement + "," + base_experience
-							+ ",none";
-
-					list.add(new new_config_info(material.name(), str));
-				}
-
-			} else {
-				// pw.println(" - not found data");
-			}
-
-		}
-		
-		Collections.sort(list);
-		
-		for(new_config_info con : list){
-			pw.println(con.str);
-		}
-
-		pw.close();
-		
 	}
 
 	@Override
@@ -237,46 +147,17 @@ public class CraftLevel extends JavaPlugin {
 		}
 	}
 
-	public double get_success_rate(int level, Material material) {
-		RequirementInformation reqinf = get_require_info(material);
-		int require_level;
-		require_level = reqinf.get_require_level();
-
-		int success_rate = this.minimum_success_rate;
-		if (level >= require_level) {
-			success_rate += increase_rate
-					+ (increase_rate * (level - require_level));
-		}
-
-		int maximum_success_rate;
-
-		// this.getServer().broadcastMessage("reqinf custom maximum rate : " +
-		// reqinf.get_maximum_success_rate());
-
-		// default rate
-		if (reqinf.get_maximum_success_rate() < 0) {
-			maximum_success_rate = this.get_maximum_success_rate();
-		} else {
-			maximum_success_rate = reqinf.get_maximum_success_rate();
-		}
-
-		// default maximum success rate 0-100 %
-		if (success_rate > maximum_success_rate) {
-			success_rate = maximum_success_rate;
-		} else if (success_rate < 0) {
-			success_rate = 0;
-		}
-
-		// 0 ~ 1.0
-		return (double) success_rate / 100;
-	}
-
-	public HashMap<Material, RequirementInformation> get_requirements() {
-		return this.requirements;
-	}
-
 	public PlayerCraftLevelData get_player_crafting_level_info(Player player) {
-		return this.player_crafting_level.get(player.getUniqueId());
+		if (this.player_crafting_level.containsKey(player.getUniqueId())) {
+			return this.player_crafting_level.get(player.getUniqueId());
+		} else {
+			
+			player.sendMessage(ChatColor.RED+" You haven't CraftLevel data. Creating new data...");
+			this.player_crafting_level.put(player.getUniqueId(),
+					new PlayerCraftLevelData(player));
+
+			return this.player_crafting_level.get(player.getUniqueId());
+		}
 	}
 
 	public boolean get_player_crafting_level_info_contains(Player player) {
@@ -288,95 +169,106 @@ public class CraftLevel extends JavaPlugin {
 				new PlayerCraftLevelData(player));
 	}
 
-	public int[] get_next_level_exp() {
-		return this.next_level_exp;
+	static public int[] get_next_level_exp() {
+		return next_level_exp;
 	}
 
-	public int get_minimum_success_rate() {
-		return this.minimum_success_rate;
+	static public int get_minimum_success_rate() {
+		return minimum_success_rate;
 	}
 
-	public int get_maximum_success_rate() {
-		return this.maximum_success_rate;
+	static public int get_maximum_success_rate() {
+		return maximum_success_rate;
 	}
 
-	public int get_increase_rate() {
-		return this.increase_rate;
+	static public int get_increase_rate() {
+		return increase_rate;
 	}
 
-	public int get_max_craft_level() {
-		return this.max_craft_level;
+	static public int get_max_craft_level() {
+		return max_craft_level;
 	}
 
-	public int get_experience(Material material) {
-		return this.experience.get(material);
-	}
+	public MaterialInfo decode_material_info_str(String str) {
+		// Material, RequireLevel, ExperienceAsMaterial, Options
 
-	public int calc_success_exp(Recipe recipe) {
-		int exp = 0;
-		List<Material> contents = new ArrayList<Material>();
+		String[] data = str.split(",");
 
-		// ShapedRecipe
-		if (recipe instanceof ShapedRecipe) {
-			ShapedRecipe sr = (ShapedRecipe) recipe;
-			for (ItemStack item : sr.getIngredientMap().values()) {
-				if (item != null)
-					contents.add(item.getType());
+		Material material = Material.valueOf(data[0]);
+		int require_level = Integer.parseInt(data[1]);
+		int experience_as_material = Integer.parseInt(data[2]);
+
+		int max_success_rate = get_maximum_success_rate();
+		int min_success_rate = get_minimum_success_rate();
+		int fixed_success_rate = -1;
+		int custom_craft_experience = -1;
+		// # Options( n = Integer )
+		// # MAR:n -> Max Success Rate. Not limited by default max success rate.
+		// # MIR:n -> Minimum Success Rate. Not limited by default minimum
+		// success rate.
+		// # FSR:n -> Fixed Success Rate. Not craft level based.
+		// # CEX:n -> Custom Craft Experience. Not material based.
+
+		// decode options
+		if (!data[3].equals("none")) {
+
+			for (int i = 3; i < data.length; i++) {
+				String[] split = data[i].split(":");
+				String option = split[0];
+				int n = Integer.parseInt(split[1]);
+
+				switch (option) {
+				case "MAR":
+					max_success_rate = n;
+					break;
+				case "MIR":
+					min_success_rate = n;
+					break;
+				case "FSR":
+					fixed_success_rate = n;
+					break;
+				case "CEX":
+					custom_craft_experience = n;
+					break;
+				case "none":
+					break;
+				default:
+					getLogger().info(split[0] + " is not difined as Option.");
+					break;
+				}
 			}
+
 		}
-		// ShapelessRecipe
-		else if (recipe instanceof ShapelessRecipe) {
-			ShapelessRecipe sl = (ShapelessRecipe) recipe;
-			for (ItemStack item : sl.getIngredientList()) {
-				if (item != null)
-					contents.add(item.getType());
-			}
+
+		return new MaterialInfo(material, require_level, max_success_rate,
+				min_success_rate, fixed_success_rate, experience_as_material,
+				custom_craft_experience);
+	}
+
+	public static String get_prefix() {
+		return prefix;
+	}
+
+	public static MaterialInfo get_material_info(Material material) {
+
+		if (material_info.containsKey(material)) {
+			return material_info.get(material);
+		} else {
+			return null;
 		}
-		// undefined instance
+
+	}
+
+	public static String get_message(Message msg) {
+
+		if (message.containsKey(msg)) {
+			return prefix + " " + message.get(msg);
+
+		}
+		// not difined
 		else {
-			this.getServer()
-					.broadcastMessage(
-							this.get_prefix()
-									+ " undefined recipe instance. please tell Dyukusi to fix this bug.");
-			return 0;
+			return ChatColor.RED + "Not difined message.";
 		}
-
-		for (Material material : contents) {
-
-			if (this.experience.containsKey(material)) {
-				exp += this.experience.get(material);
-			} else {
-				this.getServer()
-						.broadcastMessage(
-								this.get_prefix()
-										+ ChatColor.RED
-										+ material.toString()
-										+ " has been not supported yet. need to add this item into config file.");
-				exp = 0;
-
-			}
-		}
-
-		return exp;
-	}
-
-	public RequirementInformation get_require_info(Material material) {
-		if (this.requirements.containsKey(material))
-			return this.requirements.get(material);
-		else {
-			if (this.no_requirements_data_error) {
-				getServer()
-						.broadcastMessage(
-								this.get_prefix()
-										+ material.name()
-										+ " doesn't have requirements data. please contact server owner to fix");
-			}
-			return new RequirementInformation(material, 1, -1);
-		}
-	}
-
-	public String get_prefix() {
-		return this.prefix;
 	}
 
 }

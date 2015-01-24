@@ -52,12 +52,13 @@ public class BasicCommands implements CommandExecutor {
 
 						} else if (args.length == 2) {
 
+							Player player;
+
 							// /cl status PlayerName
-							if (plugin
-									.get_player_crafting_level_info_contains(plugin
-											.getServer()
-											.getOfflinePlayer(args[1])
-											.getPlayer())) {
+							if ((player = plugin.getServer()
+									.getOfflinePlayer(args[1]).getPlayer()) != null
+									&& plugin
+											.get_player_crafting_level_info_contains(player)) {
 								pinf = plugin
 										.get_player_crafting_level_info(plugin
 												.getServer()
