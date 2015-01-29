@@ -1,0 +1,10 @@
+name: AreaManager
+version: 0.0.1
+main: jp.mydns.dyukusi.areamanager.AreaManager
+commands:
+   am:
+      description: Main AreaManager base command.
+      usage: /am
+permissions:
+   areamanager.create:
+       description: allow create new area command.

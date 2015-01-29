@@ -1,0 +1,317 @@
+package jp.mydns.dyukusi.areamanager.command;
+
+import java.util.List;
+import java.util.Map.Entry;
+
+import jp.mydns.dyukusi.areamanager.AreaManager;
+import jp.mydns.dyukusi.areamanager.areainfo.AreaInformation;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
+public class BasicCommands implements CommandExecutor {
+
+	private String cmd_prefix = "am_";
+	AreaManager plugin;
+
+	public BasicCommands(AreaManager areaManager) {
+		plugin = areaManager;
+	}
+
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
+
+		if (sender instanceof Player) {
+
+			Player player = (Player) sender;
+
+			if (command.getName().equals("am")) {
+
+				// set positions
+				if (args.length == 1) {
+
+					if (args[0].equals("first") || args[0].equals("second")) {
+
+						Location location = player.getLocation();
+						player.setMetadata(this.cmd_prefix + args[0],
+								new FixedMetadataValue(plugin, location));
+						sender.sendMessage(plugin.get_prefix()
+								+ "Position set to " + location.getBlockX()
+								+ "," + location.getBlockY() + ","
+								+ location.getBlockZ());
+						return true;
+
+					} else if (args[0].equals("delete")) {
+
+						String area_name = plugin.get_current_area_name(player);
+
+						if (plugin.isRegisteredArea(area_name)) {
+							plugin.remove_custom_area(area_name);
+							player.sendMessage(plugin.get_prefix()
+									+ ChatColor.YELLOW + area_name
+									+ " : Delete completed! ");
+
+						} else {
+							player.sendMessage(plugin.get_prefix()
+									+ ChatColor.RED
+									+ " There isn't custom area here.");
+						}
+
+					}
+					// display all custom area
+					else if (args[0].equals("list")) {
+						player.sendMessage(ChatColor.YELLOW
+								+ "----- CustomArea -----");
+						for (Entry<String, AreaInformation> ent : plugin
+								.get_area_entrySet()) {
+							AreaInformation info = ent.getValue();
+							Location[] loc = info.get_location();
+
+							String AreaName;
+
+							if (info.get_custom_area_name() != null) {
+								AreaName = info.get_custom_area_name();
+							} else {
+								AreaName = info.get_area_name();
+							}
+
+							player.sendMessage(ChatColor.GOLD + AreaName
+									+ ChatColor.WHITE + " : "
+									+ info.get_range_str());
+						}
+
+						return true;
+					}
+					// buy land
+					else if (args[0].equals("buy")) {
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+
+							if (info.get_can_buy()) {
+
+								int current_money = (int) plugin.get_economy()
+										.getBalance(player);
+
+								if (current_money >= info.get_price()) {
+									plugin.get_economy().withdrawPlayer(player,
+											info.get_price());
+
+									ProtectedRegion region = plugin
+											.get_wg()
+											.getRegionManager(
+													info.get_location()[0]
+															.getWorld())
+											.getRegion(info.get_area_name());
+									info.buy_land(player, region);
+
+									player.sendMessage(ChatColor.GREEN
+											+ "おめでとうございます！土地の購入が完了しました。");
+									player.sendMessage(ChatColor.AQUA
+											+ "< Congraturations!! Now you are the owner of this land. >");
+								} else {
+									player.sendMessage(ChatColor.RED
+											+ "Not enough money.");
+								}
+
+							}
+							// can not buy the land
+							else {
+								player.sendMessage(ChatColor.GREEN
+										+ "この土地を購入することは出来ません。");
+								player.sendMessage(ChatColor.AQUA
+										+ "< Can not buy this land now. >");
+							}
+
+						} else {
+							player.sendMessage(ChatColor.RED
+									+ "Need to be in an area.");
+						}
+
+						return true;
+					} else if (args[0].equals("canbuy")) {
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+
+							if (info.get_can_buy()) {
+								info.set_can_buy(false);
+								player.sendMessage(ChatColor.GREEN
+										+ "Now available");
+							} else {
+								info.set_can_buy(true);
+								player.sendMessage(ChatColor.GREEN
+										+ "Now not available");
+							}
+						} else {
+							player.sendMessage(ChatColor.RED
+									+ "Need to be in an area.");
+						}
+						return true;
+					}
+
+				} else if (args.length == 2) {
+
+					if (args[0].equals("create")) {
+
+						Location first = null, second = null;
+						List<MetadataValue> values = player
+								.getMetadata(this.cmd_prefix + "first");
+						for (MetadataValue value : values) {
+							if (value.getOwningPlugin().getDescription()
+									.getName()
+									.equals(plugin.getDescription().getName())) {
+								first = (Location) value.value();
+								break;
+							}
+						}
+
+						values = player.getMetadata(this.cmd_prefix + "second");
+						for (MetadataValue value : values) {
+							if (value.getOwningPlugin().getDescription()
+									.getName()
+									.equals(plugin.getDescription().getName())) {
+								second = (Location) value.value();
+								break;
+							}
+						}
+
+						if (first == null || second == null) {
+							player.sendMessage(plugin.get_prefix()
+									+ " Need to set first and second position to create new area.");
+						} else {
+							plugin.add_new_area(new AreaInformation(args[1],
+									player.getName(), 0, first, second, true));
+
+							// expand vert
+							first.setY(0);
+							second.setY(255);
+
+							ProtectedCuboidRegion new_area = new ProtectedCuboidRegion(
+									args[1], AreaManager.convertToSk89qBV(first),
+									AreaManager.convertToSk89qBV(second));
+
+							new_area.setFlag(DefaultFlag.PASSTHROUGH,
+									State.DENY);
+
+							plugin.get_wg().getRegionManager(first.getWorld())
+									.addRegion(new_area);
+
+							;
+
+							player.sendMessage(plugin.get_prefix()
+									+ " Registering new area is completed!");
+						}
+
+					}
+					// delete area
+					else if (args[0].equals("delete")) {
+						if (plugin.isRegisteredArea(args[1])) {
+							plugin.remove_custom_area(args[1]);
+							player.sendMessage(plugin.get_prefix() + " "
+									+ args[1] + " was deleted.");
+
+						} else {
+							player.sendMessage(plugin.get_prefix() + " "
+									+ args[1] + " wast not found.");
+						}
+						return true;
+					} else if (args[0].equals("ignorey")) {
+						if (plugin.isRegisteredArea(args[1])) {
+
+							AreaInformation info = plugin
+									.get_area_info(args[1]);
+
+							// true -> false
+							if (info.get_ignore_y()) {
+								info.set_ignore_y(false);
+								player.sendMessage(plugin.get_prefix()
+										+ ChatColor.GOLD + args[1]
+										+ ChatColor.GREEN
+										+ " : Now not ignoring y.");
+							}
+							// false -> true
+							else {
+								info.set_ignore_y(true);
+								player.sendMessage(plugin.get_prefix()
+										+ ChatColor.GOLD + args[1]
+										+ ChatColor.GREEN
+										+ " : Now ignoring y.");
+							}
+
+						} else {
+							player.sendMessage(plugin.get_prefix() + " "
+									+ args[1] + " wast not found.");
+						}
+						return true;
+					}
+					// reset owner
+					else if (args[0].equals("owner") && args[1].equals("reset")) {
+
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+
+							info.reset_owner();
+							player.sendMessage(ChatColor.GREEN
+									+ "ResetOwner process have been completed!");
+
+						} else {
+							player.sendMessage("Need to be in Area.");
+							return true;
+						}
+
+					} else if (args[0].equals("rename")) {
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+							info.set_custom_area_name(args[1]);
+							player.sendMessage(ChatColor.GREEN
+									+ "Rename completed!");
+							return true;
+						}
+					} else if (args[0].equals("price")) {
+
+						try {
+							Integer.parseInt(args[1]);
+						} catch (NumberFormatException e) {
+							player.sendMessage(ChatColor.RED
+									+ "Price amount must be integer.");
+							return true;
+						}
+
+						int new_price = Integer.parseInt(args[1]);
+
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+							info.set_price(new_price);
+							player.sendMessage("Land price change have been completed!");
+							return true;
+						}
+					}
+
+				}
+
+			}
+		}
+
+		return false;
+	}
+}
