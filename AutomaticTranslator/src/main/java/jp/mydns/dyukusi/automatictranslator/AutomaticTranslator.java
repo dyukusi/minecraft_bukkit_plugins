@@ -2,7 +2,7 @@ package jp.mydns.dyukusi.automatictranslator;
 
 import java.io.IOException;
 
-import jp.mydns.dyukusi.Translation;
+import jp.mydns.dyukusi.automatictranslator.listener.SaySomethingListener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class AutomaticTranslator extends JavaPlugin {
 		}
 		
 		//listener register
-		this.getServer().getPluginManager().registerEvents(new Translation(this), this);
+		this.getServer().getPluginManager().registerEvents(new SaySomethingListener(this), this);
 
 	}
 
