@@ -33,6 +33,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -45,6 +47,16 @@ public class PlayerEffect implements Listener {
 	public PlayerEffect(MyPlugin myPlugin, CraftLevel craftlevel) {
 		this.plugin = myPlugin;
 		this.cl = craftlevel;
+	}
+
+	// 狼スポーン検証
+	@EventHandler
+	void WolfSpawn(CreatureSpawnEvent event) {
+		
+		if(event.getEntityType().equals(EntityType.WOLF)){
+			event.setCancelled(false);
+		}
+		
 	}
 
 	@EventHandler
@@ -112,7 +124,7 @@ public class PlayerEffect implements Listener {
 					event.setCancelled(true);
 				}
 
-			}else{
+			} else {
 				event.setCancelled(true);
 			}
 
@@ -124,7 +136,7 @@ public class PlayerEffect implements Listener {
 		if (event.getEntityType().equals(EntityType.VILLAGER)) {
 
 			if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
-								
+
 			} else {
 				event.setCancelled(true);
 			}
@@ -151,6 +163,21 @@ public class PlayerEffect implements Listener {
 							}
 						});
 			}
+		}
+	}
+
+	@EventHandler
+	void PlayerPortal(PlayerPortalEvent event) {
+		if (!event.getCause().equals(TeleportCause.NETHER_PORTAL)
+				&& event.getTo().getWorld().getEnvironment()
+						.equals(Environment.NETHER)) {
+			Player player = event.getPlayer();
+
+			player.sendMessage(ChatColor.RED
+					+ "ネザーゲートによるワープ以外の手段で地獄にワープすることはできません。");
+			player.sendMessage(ChatColor.AQUA
+					+ "<You can't warp to Nether without Nether portal>");
+			event.setCancelled(true);
 		}
 	}
 

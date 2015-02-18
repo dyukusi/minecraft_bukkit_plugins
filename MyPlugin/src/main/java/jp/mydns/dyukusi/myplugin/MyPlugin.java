@@ -4,6 +4,7 @@ import jp.mydns.dyukusi.craftlevel.CraftLevel;
 import jp.mydns.dyukusi.myplugin.achievement.MyAchievement;
 import jp.mydns.dyukusi.myplugin.listener.PlayerEffect;
 import jp.mydns.dyukusi.myplugin.mycommand.MyCommand;
+import jp.mydns.dyukusi.myplugin.mycommand.SaySomething;
 import me.teej107.customachievement.CAPluginAPI;
 
 import org.bukkit.Material;
@@ -19,6 +20,8 @@ public class MyPlugin extends JavaPlugin {
 				.getPlugin("CraftLevel")) == null) {
 
 		}
+		
+		this.getCommand("s").setExecutor(new SaySomething(this));
 
 		getLogger().info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@MYPLUGIN");
 

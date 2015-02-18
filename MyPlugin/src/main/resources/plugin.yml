@@ -5,3 +5,6 @@ commands:
    mp:
       description: Main BiomeNotificator base command.
       usage: /mp demo or kastel
+   s:
+      description: Main BiomeNotificator base command.
+      usage: /s something what you want to say
