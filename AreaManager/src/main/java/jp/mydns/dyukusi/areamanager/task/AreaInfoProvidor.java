@@ -38,7 +38,7 @@ public class AreaInfoProvidor extends BukkitRunnable {
 			if (info != null) {
 				String AreaName;
 
-				if (info.get_custom_area_name() != null) {
+				if (!info.get_custom_area_name().equals("null")) {
 					AreaName = info.get_custom_area_name();
 				} else {
 					AreaName = info.get_area_name();
@@ -54,6 +54,25 @@ public class AreaInfoProvidor extends BukkitRunnable {
 						+ "<LandPrice>" + ChatColor.WHITE + " : "
 						+ ChatColor.GOLD + info.get_price());
 
+				int sec = (int) (System.currentTimeMillis() / 1000);
+				int min = sec / 60;
+				int hour = min / 60;
+
+				int diff_hour = hour - info.get_last_played_time();
+
+				if (info.get_owner_name().equals("none") || (!plugin
+						.getServer()
+						.getOnlinePlayers()
+						.contains(
+								plugin.getServer()
+										.getOfflinePlayer(info.get_owner_name())
+										.getPlayer()) && diff_hour >= 24 * 4)
+						|| info.get_owner_want_to_sell()) {
+					info.set_can_buy(true);
+				} else {
+					info.set_can_buy(false);
+				}
+
 				String canbuy;
 
 				if (info.get_can_buy()) {
@@ -67,11 +86,11 @@ public class AreaInfoProvidor extends BukkitRunnable {
 				player.sendMessage(ChatColor.YELLOW + "状態" + ChatColor.AQUA
 						+ "<Status>" + ChatColor.WHITE + " : " + canbuy);
 
-				if (info.get_owner_name().equals("none")) {
-					player.sendMessage(ChatColor.YELLOW + "/buy "
+				if (info.get_can_buy()) {
+					player.sendMessage(ChatColor.LIGHT_PURPLE + "/am buy "
 							+ ChatColor.GREEN + "で土地を購入することができます。");
 					player.sendMessage(ChatColor.AQUA
-							+ " < Execute /buy to buy this land. >");
+							+ " < Execute [ /am buy ] to buy this land. >");
 				}
 
 			}

@@ -100,6 +100,16 @@ public class BasicCommands implements CommandExecutor {
 							AreaInformation info = plugin.get_area_info(plugin
 									.get_current_area_name(player));
 
+							// can not buy own land
+							if (info.get_owner_name().equals(player.getName())) {
+								player.sendMessage(ChatColor.RED
+										+ "既に所有している土地を購入することはできません。");
+								player.sendMessage(ChatColor.AQUA
+										+ "< Can not buy own land. >");
+
+								return true;
+							}
+
 							if (info.get_can_buy()) {
 
 								int current_money = (int) plugin.get_economy()
@@ -115,6 +125,15 @@ public class BasicCommands implements CommandExecutor {
 													info.get_location()[0]
 															.getWorld())
 											.getRegion(info.get_area_name());
+
+									if (!info.get_owner_name().equals("none")) {
+										player.performCommand("od deposit "
+												+ info.get_owner_name() + " "
+												+ info.get_price() + " "
+												+ "土地買収" + ChatColor.AQUA
+												+ " <Purchase your land> ");
+									}
+
 									info.buy_land(player, region);
 
 									player.sendMessage(ChatColor.GREEN
@@ -123,13 +142,14 @@ public class BasicCommands implements CommandExecutor {
 											+ "< Congraturations!! Now you are the owner of this land. >");
 								} else {
 									player.sendMessage(ChatColor.RED
-											+ "Not enough money.");
+											+ "所持金が足りません。" + ChatColor.AQUA
+											+ " <Not enough money>");
 								}
 
 							}
 							// can not buy the land
 							else {
-								player.sendMessage(ChatColor.GREEN
+								player.sendMessage(ChatColor.RED
 										+ "この土地を購入することは出来ません。");
 								player.sendMessage(ChatColor.AQUA
 										+ "< Can not buy this land now. >");
@@ -141,21 +161,22 @@ public class BasicCommands implements CommandExecutor {
 						}
 
 						return true;
-					} else if (args[0].equals("canbuy")) {
+					} else if (args[0].equals("sell")) {
 						if (!plugin.get_current_area_name(player)
 								.equals("null")) {
 							AreaInformation info = plugin.get_area_info(plugin
 									.get_current_area_name(player));
 
 							if (info.get_can_buy()) {
-								info.set_can_buy(false);
+								info.set_owner_want_to_sell(false);
 								player.sendMessage(ChatColor.GREEN
-										+ "Now available");
+										+ "Now not on sale.");
 							} else {
-								info.set_can_buy(true);
+								info.set_owner_want_to_sell(true);
 								player.sendMessage(ChatColor.GREEN
-										+ "Now not available");
+										+ "Now on sale for other player.");
 							}
+
 						} else {
 							player.sendMessage(ChatColor.RED
 									+ "Need to be in an area.");
@@ -193,15 +214,18 @@ public class BasicCommands implements CommandExecutor {
 							player.sendMessage(plugin.get_prefix()
 									+ " Need to set first and second position to create new area.");
 						} else {
+
 							plugin.add_new_area(new AreaInformation(args[1],
-									player.getName(), 0, first, second, true));
+									"null", player.getName(), 0, first, second,
+									true, true, plugin.get_current_hour_time()));
 
 							// expand vert
 							first.setY(0);
 							second.setY(255);
 
 							ProtectedCuboidRegion new_area = new ProtectedCuboidRegion(
-									args[1], AreaManager.convertToSk89qBV(first),
+									args[1],
+									AreaManager.convertToSk89qBV(first),
 									AreaManager.convertToSk89qBV(second));
 
 							new_area.setFlag(DefaultFlag.PASSTHROUGH,

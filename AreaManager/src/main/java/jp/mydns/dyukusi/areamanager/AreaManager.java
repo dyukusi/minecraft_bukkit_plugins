@@ -1,19 +1,24 @@
 package jp.mydns.dyukusi.areamanager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import jp.mydns.dyukusi.areamanager.areainfo.AreaInformation;
 import jp.mydns.dyukusi.areamanager.command.BasicCommands;
+import jp.mydns.dyukusi.areamanager.listener.PlayerLoginOut;
 import jp.mydns.dyukusi.areamanager.task.AreaInfoProvidor;
+import jp.mydns.dyukusi.areamanager.task.SaveAreaInfoData;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -76,9 +81,51 @@ public class AreaManager extends JavaPlugin {
 
 		// read save data
 		this.area_info = new HashMap<String, AreaInformation>();
+		Scanner sc = null;
+
+		try {
+			sc = new Scanner(new File(areainfo_path));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (sc != null) {
+			while (sc.hasNextLine()) {
+				String str = sc.nextLine();
+
+				// ignore comment line
+				if (str.toCharArray()[0] == '#') {
+					continue;
+				}
+
+				String data[] = str.split(",");
+
+				// pw.println("# World, AreaName, CustomAreaName, Owner, Price, location1, location2, IgnoreY, CanBuy");
+				World world = getServer().getWorld(data[0]);
+				Location first = new Location(world, Integer.parseInt(data[5]),
+						Integer.parseInt(data[6]), Integer.parseInt(data[7]));
+				Location second = new Location(world,
+						Integer.parseInt(data[8]), Integer.parseInt(data[9]),
+						Integer.parseInt(data[10]));
+
+				this.area_info.put(
+						data[1],
+						new AreaInformation(data[1], data[2], data[3], Integer
+								.parseInt(data[4]), first, second, Boolean
+								.valueOf(data[11]), Boolean.valueOf(data[12]),
+								Integer.parseInt(data[13])));
+			}
+			sc.close();
+			getLogger().info("Loading area data has been completed!!");
+		}
 
 		// register command
 		this.getCommand("am").setExecutor(new BasicCommands(this));
+
+		// register listener
+		this.getServer().getPluginManager()
+				.registerEvents(new PlayerLoginOut(this), this);
 
 		// run area info providor
 		int i = 0;
@@ -87,11 +134,15 @@ public class AreaManager extends JavaPlugin {
 			i++;
 		}
 
+		// run backup process
+		new SaveAreaInfoData(this, this.areainfo_path + "_backup")
+				.runTaskTimer(this, 20 * 60 * 30, 20 * 60 * 30);
+
 	}
 
 	@Override
 	public void onDisable() {
-
+		new SaveAreaInfoData(this, this.areainfo_path).run();
 	}
 
 	boolean setupEconomy() {
@@ -193,9 +244,17 @@ public class AreaManager extends JavaPlugin {
 	public WorldGuardPlugin get_wg() {
 		return this.wg;
 	}
-	
-	public Economy get_economy(){
+
+	public Economy get_economy() {
 		return this.economy;
+	}
+
+	public int get_current_hour_time() {
+		int sec = (int) (System.currentTimeMillis() / 1000);
+		int min = sec / 60;
+		int hour = min / 60;
+
+		return hour;
 	}
 
 }

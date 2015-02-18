@@ -14,18 +14,35 @@ public class AreaInformation {
 	String world_name;
 	String owner;
 	int price;
+	int last_played_time;
+	private int f_x, f_y, f_z;
+	private int s_x, s_y, s_z;
+
 	private int small_x, small_y, small_z;
 	private int big_x, big_y, big_z;
 	boolean ignore_y;
+	boolean owner_want_to_sell;
 	boolean can_buy;
 
-	public AreaInformation(String AreaName, String owner, int price,
-			Location first, Location second, boolean ignore_y) {
+	public AreaInformation(String AreaName, String CustomAreaNAME,
+			String owner, int price, Location first, Location second,
+			boolean ignore_y, boolean can_buy, int last_played) {
 
 		this.area_name = AreaName;
+		this.custom_area_name = CustomAreaNAME;			
 		this.world_name = first.getWorld().getName();
 		this.owner = owner;
 		this.price = price;
+
+		// first position
+		this.f_x = first.getBlockX();
+		this.f_y = first.getBlockY();
+		this.f_z = first.getBlockZ();
+
+		// second position
+		this.s_x = second.getBlockX();
+		this.s_y = second.getBlockY();
+		this.s_z = second.getBlockZ();
 
 		// big
 		this.big_x = Math.max(first.getBlockX(), second.getBlockX());
@@ -38,8 +55,24 @@ public class AreaInformation {
 		this.small_z = Math.min(first.getBlockZ(), second.getBlockZ());
 
 		this.ignore_y = ignore_y;
-		this.can_buy = false;
+		this.owner_want_to_sell = false;
+		this.can_buy = can_buy;
 
+		// time
+		this.last_played_time = last_played;
+
+		// int sec = (int) (System.currentTimeMillis() / 1000);
+		// int min = sec / 60;
+		// int hour = min / 60;
+		// this.last_played_time = hour;
+	}
+
+	public boolean get_owner_want_to_sell() {
+		return this.owner_want_to_sell;
+	}
+
+	public void set_owner_want_to_sell(boolean set) {
+		this.owner_want_to_sell = set;
 	}
 
 	public int get_price() {
@@ -120,18 +153,40 @@ public class AreaInformation {
 		DefaultDomain domain = new DefaultDomain();
 		domain.addPlayer(player.getUniqueId());
 		region.setOwners(domain);
-		set_can_buy(false);
+
+		this.set_owner_want_to_sell(false);
+		this.set_can_buy(false);
 
 		// twice price
 		this.price *= 2;
 	}
-	
-	public boolean get_can_buy(){
+
+	public boolean get_can_buy() {
 		return this.can_buy;
 	}
-	
-	public void set_can_buy(boolean canbuy){
+
+	public void set_can_buy(boolean canbuy) {
 		this.can_buy = canbuy;
+	}
+
+	public String get_world_name() {
+		return this.world_name;
+	}
+
+	public int[] get_first_position() {
+		return new int[] { this.f_x, this.f_y, this.f_z };
+	}
+
+	public int[] get_second_position() {
+		return new int[] { this.s_x, this.s_y, this.s_z };
+	}
+
+	public void set_last_played_time(int hour) {
+		this.last_played_time = hour;
+	}
+
+	public int get_last_played_time() {
+		return this.last_played_time;
 	}
 
 }
