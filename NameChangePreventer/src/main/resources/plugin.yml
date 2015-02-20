@@ -1,0 +1,3 @@
+name: NameChangePreventer
+version: 0.0.1
+main: jp.mydns.dyukusi.namechangepreventer.NameChangePreventer
