@@ -22,7 +22,8 @@ public class Deposit implements CommandExecutor {
 		this.economy = eco;
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String arg2,
+			String[] args) {
 		// Example
 		// /od deposit [PlayerName] [Amount(Double)] [Reason]
 
@@ -32,13 +33,15 @@ public class Deposit implements CommandExecutor {
 
 				if (args[0].equals("deposit")) {
 
-					OfflinePlayer to = plugin.getServer().getOfflinePlayer(args[1]);
+					OfflinePlayer to = plugin.getServer().getOfflinePlayer(
+							args[1]);
 
 					// System.out.println(to.getFirstPlayed()+" , "+to.getLastPlayed()+" , "+to.getgetPlayerTime()+" , "+
 					// to.getPlayerTimeOffset());
 					// プレイヤーが見つからなかった
 					if (to.getFirstPlayed() == 0L) {
-						sender.sendMessage(ChatColor.RED + args[1] + "という名前のプレイヤーは存在しません。");
+						sender.sendMessage(ChatColor.RED + args[1]
+								+ "という名前のプレイヤーは存在しません。");
 						return true;
 					}
 
@@ -47,7 +50,8 @@ public class Deposit implements CommandExecutor {
 					try {
 						Amount = Double.parseDouble(args[2]);
 					} catch (NumberFormatException e) {
-						sender.sendMessage(ChatColor.RED + "金額は整数又は浮動小数点のみ受け付けます。");
+						sender.sendMessage(ChatColor.RED
+								+ "金額は整数又は浮動小数点のみ受け付けます。");
 						return true;
 					}
 
@@ -55,29 +59,10 @@ public class Deposit implements CommandExecutor {
 					for (int i = 3; i < args.length; i++)
 						Reason += args[i] + " ";
 
-					// オフライン時はサーバーが保存
-					if (!to.isOnline()) {
+					// deposit process
+					plugin.deposit(sender, to, (int) Amount, Reason);
 
-						// MAPに登録
-						PlayerLogin.deposit(sender.getName(), args[1], Amount, Reason);
-					}
-					// オンライン時はそのまま送金
-					else {
-						sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDepositor] " + ChatColor.WHITE
-								+ to.getName() + ChatColor.GREEN + " はオンラインなので、直ちに送金します。");
-						sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDepositor]" + ChatColor.AQUA + "<"
-								+ ChatColor.WHITE + to.getName() + ChatColor.AQUA
-								+ " is online now, so remmitance is implemented immediately.>");
-
-						new LoginDepositProcess(plugin, economy, new DepositInformation(sender.getName(), to.getName(),
-								Amount, Reason), to.getPlayer()).runTaskLater(plugin, 40);
-
-					}
-
-					sender.sendMessage(ChatColor.LIGHT_PURPLE + "[OfflineDepositor] " + ChatColor.GREEN + "送金が完了しました！ "
-							+ ChatColor.AQUA + "< Deposit is successful! > ");
 					return true;
-
 				}
 			}
 
