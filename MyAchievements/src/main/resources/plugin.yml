@@ -1,0 +1,8 @@
+name: MyAchievements
+version: 0.0.1
+main: jp.mydns.dyukusi.myachievements.MyAchievements
+depend: [Statistics]
+commands:
+   ac:
+      description: Display Achievements list.
+      usage: /ac
