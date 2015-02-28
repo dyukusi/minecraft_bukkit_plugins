@@ -36,66 +36,72 @@ public class AreaInfoProvidor extends BukkitRunnable {
 					current_area_name));
 
 			if (info != null) {
-				String AreaName;
 
-				if (!info.get_custom_area_name().equals("null")) {
-					AreaName = info.get_custom_area_name();
-				} else {
-					AreaName = info.get_area_name();
+				if (!player.hasMetadata("hide_own_area_info")
+						|| !info.get_owner_name().equals(player.getName())) {
+
+					String AreaName;
+
+					if (!info.get_custom_area_name().equals("null")) {
+						AreaName = info.get_custom_area_name();
+					} else {
+						AreaName = info.get_area_name();
+					}
+
+					player.sendMessage(ChatColor.DARK_RED + "--------"
+							+ ChatColor.GOLD + AreaName + ChatColor.DARK_RED
+							+ "--------");
+					player.sendMessage(ChatColor.YELLOW + "地主" + ChatColor.AQUA
+							+ "<LandOwner>" + ChatColor.WHITE + " : "
+							+ ChatColor.GOLD + info.get_owner_name());
+					player.sendMessage(ChatColor.YELLOW + "地価" + ChatColor.AQUA
+							+ "<LandPrice>" + ChatColor.WHITE + " : "
+							+ ChatColor.GOLD + info.get_price());
+
+					int sec = (int) (System.currentTimeMillis() / 1000);
+					int min = sec / 60;
+					int hour = min / 60;
+
+					int diff_hour = hour - info.get_last_played_time();
+
+					if (info.get_owner_name().equals("none")
+							|| (!plugin
+									.getServer()
+									.getOnlinePlayers()
+									.contains(
+											plugin.getServer()
+													.getOfflinePlayer(
+															info.get_owner_name())
+													.getPlayer()) && diff_hour >= 24 * 4)
+							|| info.get_owner_want_to_sell()) {
+						info.set_can_buy(true);
+					} else {
+						info.set_can_buy(false);
+					}
+
+					String canbuy;
+
+					if (info.get_can_buy()) {
+						canbuy = ChatColor.GREEN + "売出中 " + ChatColor.AQUA
+								+ "<Now on sale>";
+					} else {
+						canbuy = ChatColor.RED + "占有中 " + ChatColor.AQUA
+								+ "<Not available now>";
+					}
+
+					player.sendMessage(ChatColor.YELLOW + "状態" + ChatColor.AQUA
+							+ "<Status>" + ChatColor.WHITE + " : " + canbuy);
+
+					if (info.get_can_buy()) {
+						player.sendMessage(ChatColor.LIGHT_PURPLE + "/am buy "
+								+ ChatColor.GREEN + "で土地を購入することができます。");
+						player.sendMessage(ChatColor.AQUA
+								+ " < Execute [ /am buy ] to buy this land. >");
+					}
+
 				}
-
-				player.sendMessage(ChatColor.DARK_RED + "--------"
-						+ ChatColor.GOLD + AreaName + ChatColor.DARK_RED
-						+ "--------");
-				player.sendMessage(ChatColor.YELLOW + "地主" + ChatColor.AQUA
-						+ "<LandOwner>" + ChatColor.WHITE + " : "
-						+ ChatColor.GOLD + info.get_owner_name());
-				player.sendMessage(ChatColor.YELLOW + "地価" + ChatColor.AQUA
-						+ "<LandPrice>" + ChatColor.WHITE + " : "
-						+ ChatColor.GOLD + info.get_price());
-
-				int sec = (int) (System.currentTimeMillis() / 1000);
-				int min = sec / 60;
-				int hour = min / 60;
-
-				int diff_hour = hour - info.get_last_played_time();
-
-				if (info.get_owner_name().equals("none") || (!plugin
-						.getServer()
-						.getOnlinePlayers()
-						.contains(
-								plugin.getServer()
-										.getOfflinePlayer(info.get_owner_name())
-										.getPlayer()) && diff_hour >= 24 * 4)
-						|| info.get_owner_want_to_sell()) {
-					info.set_can_buy(true);
-				} else {
-					info.set_can_buy(false);
-				}
-
-				String canbuy;
-
-				if (info.get_can_buy()) {
-					canbuy = ChatColor.GREEN + "売出中 " + ChatColor.AQUA
-							+ "<Now on sale>";
-				} else {
-					canbuy = ChatColor.RED + "占有中 " + ChatColor.AQUA
-							+ "<Not available now>";
-				}
-
-				player.sendMessage(ChatColor.YELLOW + "状態" + ChatColor.AQUA
-						+ "<Status>" + ChatColor.WHITE + " : " + canbuy);
-
-				if (info.get_can_buy()) {
-					player.sendMessage(ChatColor.LIGHT_PURPLE + "/am buy "
-							+ ChatColor.GREEN + "で土地を購入することができます。");
-					player.sendMessage(ChatColor.AQUA
-							+ " < Execute [ /am buy ] to buy this land. >");
-				}
-
 			}
 		}
 
 	}
-
 }

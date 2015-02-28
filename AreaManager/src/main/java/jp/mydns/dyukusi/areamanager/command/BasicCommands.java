@@ -136,6 +136,11 @@ public class BasicCommands implements CommandExecutor {
 
 									info.buy_land(player, region);
 
+									// set metadata
+									player.setMetadata(
+											"BuyLand",
+											new FixedMetadataValue(plugin, true));
+
 									player.sendMessage(ChatColor.GREEN
 											+ "おめでとうございます！土地の購入が完了しました。");
 									player.sendMessage(ChatColor.AQUA
@@ -182,6 +187,34 @@ public class BasicCommands implements CommandExecutor {
 									+ "Need to be in an area.");
 						}
 						return true;
+					}
+					// hide own area auto info
+					else if (args[0].equals("hide")) {
+
+						// hide
+						if (!player.hasMetadata("hide_own_area_info")) {
+							player.setMetadata("hide_own_area_info",
+									new FixedMetadataValue(plugin, true));
+
+							player.sendMessage(ChatColor.GREEN
+									+ "所有地の自動情報表示機能を" + ChatColor.GOLD + "OFF"
+									+ ChatColor.GREEN + "にしました。");
+							player.sendMessage(ChatColor.AQUA
+									+ "Disable auto info display function at your own area.");
+
+						}
+						// display
+						else {
+							player.removeMetadata("hide_own_area_info", plugin);
+							player.sendMessage(ChatColor.GREEN
+									+ "所有地の自動情報表示機能を" + ChatColor.GOLD + "ON"
+									+ ChatColor.GREEN + "にしました。");
+							player.sendMessage(ChatColor.AQUA
+									+ "Enable auto info display function at your own area.");
+						}
+
+						return true;
+
 					}
 
 				} else if (args.length == 2) {
