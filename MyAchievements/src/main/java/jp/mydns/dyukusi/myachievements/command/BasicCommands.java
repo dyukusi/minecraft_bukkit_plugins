@@ -58,8 +58,16 @@ public class BasicCommands implements CommandExecutor, Listener {
 					unw_meta.setDisplayName(ChatColor.RED
 							+ "作成中 <Under construction>");
 					unworked.setItemMeta(unw_meta);
-					inv.setItem(1, unworked);
-
+					inv.setItem(2, unworked);
+					inv.setItem(3, unworked);
+					inv.setItem(4, unworked);
+					inv.setItem(5, unworked);
+					inv.setItem(24, unworked);
+					inv.setItem(25, unworked);
+					inv.setItem(26, unworked);					
+					inv.setItem(34, unworked);
+					inv.setItem(35, unworked);
+					
 					// add wall
 					ItemStack wall = new ItemStack(Material.STAINED_GLASS_PANE,
 							1, (short) 15);

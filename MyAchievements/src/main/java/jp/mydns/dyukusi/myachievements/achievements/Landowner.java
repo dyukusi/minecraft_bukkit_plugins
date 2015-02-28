@@ -46,7 +46,7 @@ public class Landowner extends AchieveInterface {
 
 	@Override
 	public int getInvIndex() {
-		return 15;
+		return 51;
 	}
 
 	@Override

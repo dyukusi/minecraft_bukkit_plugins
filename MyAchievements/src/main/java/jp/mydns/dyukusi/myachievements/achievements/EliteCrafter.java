@@ -23,7 +23,7 @@ public class EliteCrafter extends AchieveInterface {
 
 	public EliteCrafter(OfflineDepositor depositor, CraftLevel craftlevel,
 			AchieveInterface before) {
-		super("EliteCrafter", Material.WORKBENCH);
+		super("EliteCrafter", Material.IRON_BLOCK);
 
 		this.depositor = depositor;
 		this.craftlevel = craftlevel;

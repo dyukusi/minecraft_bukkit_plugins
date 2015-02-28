@@ -8,6 +8,7 @@ import jp.mydns.dyukusi.offlinedepositor.OfflineDepositor;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 import com.wolvencraft.yasp.session.OnlineSession;
@@ -26,8 +27,8 @@ public class RoundTheWorld extends AchieveInterface {
 		setColor(ChatColor.YELLOW);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "100000m歩く");
-		lore_list.add(ChatColor.AQUA + "< Walk 100000m >");
+		lore_list.add(ChatColor.WHITE + "全種類のバイオームに訪れる");
+		lore_list.add(ChatColor.AQUA + "< Visit all kinds of biome >");
 
 		setLore(lore_list);
 	}
@@ -35,9 +36,14 @@ public class RoundTheWorld extends AchieveInterface {
 	@Override
 	public boolean isAchieved(Player player, OnlineSession session) {
 
-		if ((double) session.getPlayerTotals().getValue(
-				PlayerVariable.DISTANCE_FOOT) > 100000) {
-			return true;
+		if (player.hasMetadata("visit_biome_num")) {
+
+			int visit_biome_num = player.getMetadata("visit_biome_num").get(0)
+					.asInt();
+
+			if (visit_biome_num >= Biome.values().length) {
+				return true;
+			}
 		}
 
 		return false;
@@ -45,12 +51,12 @@ public class RoundTheWorld extends AchieveInterface {
 
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 3000, "Walk 10000m");
+		depositor.deposit("Bonus", player, 3000, "Visit all kinds of biome");
 	}
 
 	@Override
 	public int getInvIndex() {
-		return 40;
+		return 49;
 	}
 
 	@Override

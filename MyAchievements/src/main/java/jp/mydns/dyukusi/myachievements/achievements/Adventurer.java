@@ -18,7 +18,7 @@ public class Adventurer extends AchieveInterface {
 	AchieveInterface before;
 
 	public Adventurer(OfflineDepositor depositor, AchieveInterface before) {
-		super("Adventurer", Material.GOLD_BOOTS);
+		super("Adventurer", Material.IRON_BOOTS);
 
 		this.depositor = depositor;
 		this.before = before;
@@ -27,31 +27,37 @@ public class Adventurer extends AchieveInterface {
 		setDisplayUnachieved(true);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "50000m歩く");
-		lore_list.add(ChatColor.AQUA + "< Walk 50000m >");
+		lore_list.add(ChatColor.WHITE + "50種類のバイオームに訪れる");
+		lore_list.add(ChatColor.AQUA + "< Visit 50 kinds of biome >");
 
 		setLore(lore_list);
 	}
 
 	@Override
 	public boolean isAchieved(Player player, OnlineSession session) {
-		
-		if ((double) session.getPlayerTotals().getValue(
-				PlayerVariable.DISTANCE_FOOT) > 50000) {
-			return true;
+
+		if (player.hasMetadata("visit_biome_num")) {
+
+			int visit_biome_num = player.getMetadata("visit_biome_num").get(0)
+					.asInt();
+
+			if (visit_biome_num >= 50) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
+
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 5000, "Walk 50000m");
+		depositor.deposit("Bonus", player, 5000, "Visit 50 kinds of biome");
 	}
 
 	@Override
 	public int getInvIndex() {
-		return 39;
+		return 48;
 	}
 
 	@Override

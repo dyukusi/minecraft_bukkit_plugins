@@ -32,8 +32,8 @@ public class GiveMeMoreMoney extends AchieveInterface {
 		setColor(ChatColor.YELLOW);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "1000＄貯金");
-		lore_list.add(ChatColor.AQUA + "< Save 1000$ >");
+		lore_list.add(ChatColor.WHITE + "3000＄貯金");
+		lore_list.add(ChatColor.AQUA + "< Save 3000$ >");
 
 		setLore(lore_list);
 	}
@@ -41,7 +41,7 @@ public class GiveMeMoreMoney extends AchieveInterface {
 	@Override
 	public boolean isAchieved(Player player, OnlineSession session) {
 
-		if (economy.getBalance(player) >= 1000) {
+		if (economy.getBalance(player) >= 3000) {
 			return true;
 		}
 		return false;
@@ -49,7 +49,7 @@ public class GiveMeMoreMoney extends AchieveInterface {
 
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 300, "Save 1000$");
+		depositor.deposit("Bonus", player, 500, "Save 3000$");
 	}
 
 	@Override

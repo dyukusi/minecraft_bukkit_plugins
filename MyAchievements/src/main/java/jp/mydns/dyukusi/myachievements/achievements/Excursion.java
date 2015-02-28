@@ -1,13 +1,8 @@
 package jp.mydns.dyukusi.myachievements.achievements;
 
-import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.attribute.standard.RequestingUserName;
-import javax.security.auth.login.LoginContext;
-
-import jp.mydns.dyukusi.craftlevel.CraftLevel;
 import jp.mydns.dyukusi.myachievements.AchieveInterface;
 import jp.mydns.dyukusi.offlinedepositor.OfflineDepositor;
 
@@ -18,46 +13,53 @@ import org.bukkit.entity.Player;
 import com.wolvencraft.yasp.session.OnlineSession;
 import com.wolvencraft.yasp.util.VariableManager.PlayerVariable;
 
-public class Crawler extends AchieveInterface {
+public class Excursion extends AchieveInterface {
 	OfflineDepositor depositor;
+	AchieveInterface before;
 
-	public Crawler(OfflineDepositor depositor) {
-		super("Crawler", Material.LEATHER_BOOTS);
+	public Excursion(OfflineDepositor depositor, AchieveInterface before) {
+		super("Excursion", Material.GOLD_BOOTS);
 
 		this.depositor = depositor;
+		this.before = before;
 
 		setColor(ChatColor.YELLOW);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "500m歩く");
-		lore_list.add(ChatColor.AQUA + "< Walk 500m >");
+		lore_list.add(ChatColor.WHITE + "15種類のバイオームに訪れる");
+		lore_list.add(ChatColor.AQUA + "< Visit 15 kinds of biome >");
 
 		setLore(lore_list);
 	}
-
 	@Override
 	public boolean isAchieved(Player player, OnlineSession session) {
-		
-		if ((double) session.getPlayerTotals().getValue(
-				PlayerVariable.DISTANCE_FOOT) > 500) {
-			return true;
- }
+
+		if (player.hasMetadata("visit_biome_num")) {
+
+			int visit_biome_num = player.getMetadata("visit_biome_num").get(0)
+					.asInt();
+
+			if (visit_biome_num >= 15) {
+				return true;
+			}
+		}
 
 		return false;
 	}
 
+
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 100, "Walk 500m");
+		depositor.deposit("Bonus", player, 500, "Visit 15 kinds of biome");
 	}
 
 	@Override
 	public int getInvIndex() {
-		return 36;
+		return 46;
 	}
 
 	@Override
 	public boolean isDisplayInfo(Player player) {
-		return true;
+		return before.hasAchievement(player);
 	}
 }

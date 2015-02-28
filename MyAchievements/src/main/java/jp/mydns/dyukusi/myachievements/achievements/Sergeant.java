@@ -58,7 +58,7 @@ public class Sergeant extends AchieveInterface {
 
 	@Override
 	public int getInvIndex() {
-		return 47;
+		return 16;
 	}
 
 	@Override

@@ -24,8 +24,8 @@ public class Recruit extends AchieveInterface {
 		setColor(ChatColor.YELLOW);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "30分プレイした");
-		lore_list.add(ChatColor.AQUA + "< Reach 30 min of playtime >");
+		lore_list.add(ChatColor.WHITE + "1時間プレイした");
+		lore_list.add(ChatColor.AQUA + "< Reach 1 hour of playtime >");
 
 		setLore(lore_list);
 	}
@@ -39,7 +39,9 @@ public class Recruit extends AchieveInterface {
 
 		Long min = (sec / 60);
 
-		if (min >= 30) {
+		Long hour = (min / 60);
+
+		if (hour >= 1) {
 			return true;
 		}
 
@@ -48,12 +50,12 @@ public class Recruit extends AchieveInterface {
 
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 100, "Reach 30 min of playtime");
+		depositor.deposit("Bonus", player, 100, "Reach 1 hour of playtime");
 	}
 
 	@Override
 	public int getInvIndex() {
-		return 45;
+		return 15;
 	}
 
 	@Override

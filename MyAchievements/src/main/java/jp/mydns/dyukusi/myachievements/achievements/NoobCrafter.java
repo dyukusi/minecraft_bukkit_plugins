@@ -20,7 +20,7 @@ public class NoobCrafter extends AchieveInterface {
 	CraftLevel craftlevel;
 
 	public NoobCrafter(OfflineDepositor depositor, CraftLevel craftlevel) {
-		super("NoobCrafter", Material.WORKBENCH);
+		super("NoobCrafter", Material.DIRT);
 
 		this.depositor = depositor;
 		this.craftlevel = craftlevel;

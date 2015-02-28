@@ -33,8 +33,8 @@ public class UnsatisfiedYet extends AchieveInterface {
 		setColor(ChatColor.YELLOW);
 
 		List<String> lore_list = new ArrayList<String>();
-		lore_list.add(ChatColor.WHITE + "10000＄貯金");
-		lore_list.add(ChatColor.AQUA + "< Save 10000$ >");
+		lore_list.add(ChatColor.WHITE + "100000＄貯金");
+		lore_list.add(ChatColor.AQUA + "< Save 100000$ >");
 
 		setLore(lore_list);
 	}
@@ -42,7 +42,7 @@ public class UnsatisfiedYet extends AchieveInterface {
 	@Override
 	public boolean isAchieved(Player player, OnlineSession session) {
 
-		if (economy.getBalance(player) >= 10000) {
+		if (economy.getBalance(player) >= 100000) {
 			return true;
 		}
 		return false;
@@ -50,7 +50,7 @@ public class UnsatisfiedYet extends AchieveInterface {
 
 	@Override
 	public void getReward(Player player) {
-		depositor.deposit("Bonus", player, 2000, "Save 3000$");
+		depositor.deposit("Bonus", player, 3000, "Save 10000$");
 	}
 
 	@Override

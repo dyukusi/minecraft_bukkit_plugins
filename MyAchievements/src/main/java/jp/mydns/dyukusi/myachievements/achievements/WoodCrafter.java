@@ -22,7 +22,7 @@ public class WoodCrafter extends AchieveInterface {
 
 	public WoodCrafter(OfflineDepositor depositor, CraftLevel craftlevel,
 			AchieveInterface before) {
-		super("WoodCrafter", Material.WORKBENCH);
+		super("WoodCrafter", Material.WOOD);
 
 		this.depositor = depositor;
 		this.craftlevel = craftlevel;

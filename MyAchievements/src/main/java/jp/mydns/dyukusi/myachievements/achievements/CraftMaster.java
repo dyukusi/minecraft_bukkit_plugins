@@ -22,7 +22,7 @@ public class CraftMaster extends AchieveInterface {
 
 	public CraftMaster(OfflineDepositor depositor, CraftLevel craftlevel,
 			AchieveInterface before) {
-		super("CraftMaster", Material.WORKBENCH);
+		super("CraftMaster", Material.DIAMOND_BLOCK);
 
 		this.depositor = depositor;
 		this.craftlevel = craftlevel;

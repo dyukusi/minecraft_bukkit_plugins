@@ -23,7 +23,7 @@ public class StoneCrafter extends AchieveInterface {
 
 	public StoneCrafter(OfflineDepositor depositor, CraftLevel craftlevel,
 			AchieveInterface before) {
-		super("StoneCrafter", Material.WORKBENCH);
+		super("StoneCrafter", Material.STONE);
 
 		this.depositor = depositor;
 		this.craftlevel = craftlevel;

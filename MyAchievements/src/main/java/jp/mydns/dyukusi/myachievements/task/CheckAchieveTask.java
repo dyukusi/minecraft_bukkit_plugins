@@ -40,7 +40,13 @@ public class CheckAchieveTask extends BukkitRunnable {
 
 				// already has?
 				if (!ach.hasAchievement(player)) {
-				
+					
+					
+					//to avoid error messasge
+					if(session == null || session.getPlayerTotals() == null || session.getPlayerTotals().getValue(PlayerVariable.TOTAL_PLAYTIME) == null){
+						continue;
+					}
+								
 					// achieve?
 					if (ach.isAchieved(player, session)) {
 
