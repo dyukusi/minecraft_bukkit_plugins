@@ -1,10 +1,10 @@
-name: RegenerationPoint
+name: EffectArea
 version: 0.0.1
-main: jp.mydns.dyukusi.regenerationpoint.RegenerationPoint
+main: jp.mydns.dyukusi.effectarea.EffectArea
 commands:
-   rp:
+   ea:
       description: Main RegenerationPoint base command.
-      usage: /rp
+      usage: /ea
    permissions:
-      biomenotificatior.create:
-          description: allow create new regeneration point command.
+      effectarea.areaconfigure:
+          description: allow configure area command.
