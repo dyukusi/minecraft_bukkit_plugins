@@ -1,7 +1,6 @@
 package jp.mydns.dyukusi.myplugin;
 
 import jp.mydns.dyukusi.craftlevel.CraftLevel;
-import jp.mydns.dyukusi.myplugin.achievement.MyAchievement;
 import jp.mydns.dyukusi.myplugin.listener.PlayerEffect;
 import jp.mydns.dyukusi.myplugin.mycommand.MyCommand;
 import jp.mydns.dyukusi.myplugin.mycommand.SaySomething;
@@ -29,10 +28,6 @@ public class MyPlugin extends JavaPlugin {
 				.registerEvents(new PlayerEffect(this,craftlevel), this);
 		// register command
 		this.getCommand("mp").setExecutor(new MyCommand(this));
-
-		CAPluginAPI ca = CAPluginAPI.getInstance();
-		ca.registerAchievement(new MyAchievement("test_achieve",
-				Material.GOLD_SWORD), this);
 	}
 
 	@Override

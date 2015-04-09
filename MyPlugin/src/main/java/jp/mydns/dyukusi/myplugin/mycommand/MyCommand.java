@@ -2,6 +2,7 @@ package jp.mydns.dyukusi.myplugin.mycommand;
 
 import jp.mydns.dyukusi.myplugin.MyPlugin;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,30 +28,30 @@ public class MyCommand implements CommandExecutor {
 
 				// set positions
 				if (args.length == 1) {
-					
-					if(args[0].equals("demo")){
-					
-						//城塞都市
-						player.teleport(new Location(player.getWorld(), -4923, 65, 5315));
-						
+
+					if (args[0].equals("demo")) {
+
+						// 城塞都市
+						player.teleport(new Location(player.getWorld(), -4923,
+								65, 5315));
+
+						return true;
+					} else if (args[0].equals("kastel")) {
+
+						// kastel仮拠点
+						player.teleport(new Location(player.getWorld(), -670,
+								69, 602));
+
 						return true;
 					}
-					else if(args[0].equals("kastel")){
-						
-						//kastel仮拠点
-						player.teleport(new Location(player.getWorld(), -670, 69, 602));
-						
-						return true;
-					}
-					
+
 				}
-				
+
 			}
 			
+
 		}
-		
-		
+
 		return false;
 	}
-
 }

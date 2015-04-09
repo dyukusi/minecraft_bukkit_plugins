@@ -11,11 +11,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import me.teej107.customachievement.CustomAchievement;
 
-public class MyAchievement extends CustomAchievement {
+public class CopyOfMyAchievement extends CustomAchievement {
 
 	private HashMap<UUID, Integer> blockBreaks;
 
-	public MyAchievement(String name, Material material) {
+	public CopyOfMyAchievement(String name, Material material) {
 		super(name, material);
 
 		setColor(ChatColor.RED);
