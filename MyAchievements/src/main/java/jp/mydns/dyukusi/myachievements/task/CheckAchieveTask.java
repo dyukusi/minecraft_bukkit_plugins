@@ -7,6 +7,7 @@ import jp.mydns.dyukusi.myachievements.MyAchievements;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.avaje.ebeaninternal.server.autofetch.Statistics;
@@ -22,7 +23,8 @@ public class CheckAchieveTask extends BukkitRunnable {
 	LinkedList<AchieveInterface> alist;
 	OnlineSession session;
 
-	public CheckAchieveTask(MyAchievements plugin, Player player, OnlineSession session) {
+	public CheckAchieveTask(MyAchievements plugin, Player player,
+			OnlineSession session) {
 		this.plugin = plugin;
 		this.player = player;
 		this.alist = plugin.get_achievements_list();
@@ -32,7 +34,6 @@ public class CheckAchieveTask extends BukkitRunnable {
 	@Override
 	public synchronized void run() {
 
-
 		if (player.isOnline()) {
 
 			// check achieve or not
@@ -40,15 +41,28 @@ public class CheckAchieveTask extends BukkitRunnable {
 
 				// already has?
 				if (!ach.hasAchievement(player)) {
-					
-					
-					//to avoid error messasge
-					if(session == null || session.getPlayerTotals() == null || session.getPlayerTotals().getValue(PlayerVariable.TOTAL_PLAYTIME) == null){
+
+					// to avoid error messasge
+					if (session == null
+							|| session.getPlayerTotals() == null
+							|| session.getPlayerTotals().getValue(
+									PlayerVariable.TOTAL_PLAYTIME) == null) {
 						continue;
 					}
-								
+
 					// achieve?
 					if (ach.isAchieved(player, session)) {
+				
+						//register ach_total meta
+						if (!player.hasMetadata("ach_total") || player.getMetadata("ach_total").size() == 0) {
+							player.setMetadata("ach_total",
+									new FixedMetadataValue(plugin, 0));
+						}
+
+						// increment ach got num
+						player.setMetadata("ach_total", new FixedMetadataValue(
+								plugin, player.getMetadata("ach_total").get(0)
+										.asInt() + 1));
 
 						// play sound effect
 						player.playSound(player.getLocation(), Sound.LEVEL_UP,
@@ -59,7 +73,7 @@ public class CheckAchieveTask extends BukkitRunnable {
 
 						// heal food level
 						player.setExhaustion(20);
-					
+
 						// give achievement
 						ach.giveAchievement(player);
 
@@ -80,7 +94,6 @@ public class CheckAchieveTask extends BukkitRunnable {
 
 			this.cancel();
 		}
-		
 
 	}
 }

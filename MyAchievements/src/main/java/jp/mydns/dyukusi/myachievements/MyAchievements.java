@@ -8,14 +8,17 @@ import jp.mydns.dyukusi.craftlevel.CraftLevel;
 import jp.mydns.dyukusi.myachievements.achievements.Adventurer;
 import jp.mydns.dyukusi.myachievements.achievements.AwakeToMine;
 import jp.mydns.dyukusi.myachievements.achievements.BeginningOfYourStory;
-import jp.mydns.dyukusi.myachievements.achievements.BountryHunter;
+import jp.mydns.dyukusi.myachievements.achievements.BountyHunter;
 import jp.mydns.dyukusi.myachievements.achievements.ChainMania;
 import jp.mydns.dyukusi.myachievements.achievements.CraftMaster;
+import jp.mydns.dyukusi.myachievements.achievements.Departure;
 import jp.mydns.dyukusi.myachievements.achievements.Destroyer;
 import jp.mydns.dyukusi.myachievements.achievements.DiamondMania;
 import jp.mydns.dyukusi.myachievements.achievements.EliteCrafter;
 import jp.mydns.dyukusi.myachievements.achievements.EliteMiner;
 import jp.mydns.dyukusi.myachievements.achievements.Excursion;
+import jp.mydns.dyukusi.myachievements.achievements.ForThePeace;
+import jp.mydns.dyukusi.myachievements.achievements.FullFledged;
 import jp.mydns.dyukusi.myachievements.achievements.GiveMeMoreMoney;
 import jp.mydns.dyukusi.myachievements.achievements.GoldMania;
 import jp.mydns.dyukusi.myachievements.achievements.Hell;
@@ -31,6 +34,7 @@ import jp.mydns.dyukusi.myachievements.achievements.NoobCrafter;
 import jp.mydns.dyukusi.myachievements.achievements.PhantomFish;
 import jp.mydns.dyukusi.myachievements.achievements.PleasureOfThePoor;
 import jp.mydns.dyukusi.myachievements.achievements.Pro;
+import jp.mydns.dyukusi.myachievements.achievements.ProofOfBrave;
 import jp.mydns.dyukusi.myachievements.achievements.Pugilist;
 import jp.mydns.dyukusi.myachievements.achievements.Recruit;
 import jp.mydns.dyukusi.myachievements.achievements.RoundTheWorld;
@@ -113,8 +117,15 @@ public class MyAchievements extends JavaPlugin {
 		// main quests
 		achievement_list.add(new BeginningOfYourStory(depositor));
 		achievement_list.add(new Training(depositor));
+		achievement_list
+				.add(new Departure(depositor, achievement_list.getLast()));
+		achievement_list
+		.add(new ForThePeace(depositor, achievement_list.getLast()));
+		achievement_list
+		.add(new FullFledged(depositor, achievement_list.getLast()));
 		achievement_list.add(new Hell(depositor, achievement_list.getLast()));
-		achievement_list.add(new BountryHunter(this, depositor,
+		achievement_list.add(new ProofOfBrave(depositor, achievement_list.getLast()));		
+		achievement_list.add(new BountyHunter(this, depositor,
 				achievement_list.getLast()));
 		achievement_list.add(new Hero(depositor, achievement_list.getLast()));
 
@@ -182,8 +193,7 @@ public class MyAchievements extends JavaPlugin {
 		achievement_list.add(new WealthyMerchant(depositor, mystat));
 		achievement_list.add(new Pugilist(depositor, mystat));
 		achievement_list.add(new UnderTheSea(depositor));
-		achievement_list.add(new TouristAttraction(depositor,mystat));
-		
+		achievement_list.add(new TouristAttraction(depositor, mystat));
 
 		CAPluginAPI ca = CAPluginAPI.getInstance();
 
@@ -200,7 +210,7 @@ public class MyAchievements extends JavaPlugin {
 		// register listener
 		this.getServer().getPluginManager().registerEvents(bc, this);
 		this.getServer().getPluginManager()
-				.registerEvents(new Achievements_listener(this, mystat), this);
+				.registerEvents(new Achievements_listener(this, mystat,achievement_list), this);
 
 		// check task of all player achievements
 		int i = 0;

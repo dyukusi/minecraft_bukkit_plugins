@@ -1,0 +1,67 @@
+package jp.mydns.dyukusi.myachievements.achievements;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jp.mydns.dyukusi.myachievements.AchieveInterface;
+import jp.mydns.dyukusi.offlinedepositor.OfflineDepositor;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import com.wolvencraft.yasp.db.data.DataStore.DataStoreType;
+import com.wolvencraft.yasp.session.OnlineSession;
+import com.wolvencraft.yasp.util.VariableManager.PlayerVariable;
+
+public class ProofOfBrave extends AchieveInterface {
+	OfflineDepositor depositor;
+	AchieveInterface before;
+
+	public ProofOfBrave(OfflineDepositor depositor, AchieveInterface before) {
+		super("Proof of brave", Material.BONE);
+
+		this.depositor = depositor;
+		this.before = before;
+
+		setColor(ChatColor.YELLOW);
+
+		List<String> lore_list = new ArrayList<String>();
+		lore_list.add(ChatColor.WHITE + "ウィザースケルトンを倒して頭部を手に入れる");
+		lore_list.add(ChatColor.AQUA
+				+ "< Kill wither skeleton and get the skull of it >");
+
+		setLore(lore_list);
+	}
+
+	@Override
+	public boolean isAchieved(Player player, OnlineSession session) {
+
+		if (before.hasAchievement(player)) {
+			if (player.hasMetadata("get_wither_skull")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public void getReward(Player player) {
+		depositor.deposit("Bonus", player, 2000,
+				"Kill wither skeleton and get the skull of it");
+	}
+
+	@Override
+	public int getInvIndex() {
+		return 6;
+	}
+
+	@Override
+	public boolean isDisplayInfo(Player player) {
+		if (before.hasAchievement(player)) {
+			return true;
+		}
+		return false;
+	}
+}
