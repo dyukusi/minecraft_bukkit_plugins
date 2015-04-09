@@ -36,12 +36,13 @@ public class Deposit implements CommandExecutor {
 					OfflinePlayer to = plugin.getServer().getOfflinePlayer(
 							args[1]);
 
-					// System.out.println(to.getFirstPlayed()+" , "+to.getLastPlayed()+" , "+to.getgetPlayerTime()+" , "+
-					// to.getPlayerTimeOffset());
 					// プレイヤーが見つからなかった
 					if (to.getFirstPlayed() == 0L) {
 						sender.sendMessage(ChatColor.RED + args[1]
 								+ "という名前のプレイヤーは存在しません。");
+						sender.sendMessage(ChatColor.AQUA + "< "
+								+ ChatColor.WHITE + args[1] + ChatColor.AQUA
+								+ " doesn't exist in this server. >");
 						return true;
 					}
 
@@ -50,14 +51,35 @@ public class Deposit implements CommandExecutor {
 					try {
 						Amount = Double.parseDouble(args[2]);
 					} catch (NumberFormatException e) {
-						sender.sendMessage(ChatColor.RED
-								+ "金額は整数又は浮動小数点のみ受け付けます。");
+						sender.sendMessage(ChatColor.RED + "金額は整数値のみ受け付けます。");
+						sender.sendMessage(ChatColor.AQUA
+								+ "< Money amount must be integers. >");
+
 						return true;
+					}
+
+					// lack of money to pay
+					if (sender instanceof Player) {
+						Player player = (Player) sender;
+						int having_money = (int) economy.getBalance(player);
+
+						if (having_money < Amount) {
+							player.sendMessage(ChatColor.RED + "所持金が足りません。");
+							player.sendMessage(ChatColor.AQUA
+									+ "< Not enough money to pay. >");
+							return true;
+						}
+
 					}
 
 					String Reason = "";
 					for (int i = 3; i < args.length; i++)
 						Reason += args[i] + " ";
+
+					//subtract player's having money
+					if (sender instanceof Player) {
+						economy.withdrawPlayer((Player) sender, Amount);
+					}
 
 					// deposit process
 					plugin.deposit(sender, to, (int) Amount, Reason);

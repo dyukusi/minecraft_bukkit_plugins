@@ -31,7 +31,7 @@ public class LoginDepositProcess extends BukkitRunnable {
 				+ ChatColor.WHITE + di.get_from() + ChatColor.GREEN + " for "
 				+ ChatColor.WHITE + di.get_reason() + ChatColor.GREEN + " on "
 				+ ChatColor.WHITE + di.get_time_str());
-		to.playSound(to.getLocation(), Sound.ANVIL_USE, 1, 1);
+		to.playSound(to.getLocation(), Sound.ORB_PICKUP, 1, 1.1F);
 	}
 
 }

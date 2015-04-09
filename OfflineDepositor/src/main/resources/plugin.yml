@@ -4,6 +4,6 @@ main: jp.mydns.dyukusi.offlinedepositor.OfflineDepositor
 commands:
    od:
       description: can deposit and withdraw to offline players.
-      usage: /od [deposit/withdraw] [PlayerName] [Amount] [Reason]
+      usage: /od [deposit] [PlayerName] [Amount] [Reason]
       permission: OfflineDepositor.deposit
       permission-message: You don't have <permission>
