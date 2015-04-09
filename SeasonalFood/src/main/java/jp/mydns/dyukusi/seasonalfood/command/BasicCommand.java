@@ -16,19 +16,23 @@ public class BasicCommand implements CommandExecutor {
 		this.plugin = seasonalFood;
 	}
 
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
 
 		if (command.getName().equals("sf")) {
 
 			// check current season
 			if (args.length == 0) {
-				sender.sendMessage(plugin.get_prefix() + " " + plugin.get_current_season().get_season_color()
-						+ plugin.get_current_season().get_inJapanese() + ChatColor.AQUA + " < "
-						+ plugin.get_current_season() + " >");
+				sender.sendMessage(plugin.get_prefix() + " "
+						+ plugin.get_current_season().get_season_color()
+						+ plugin.get_current_season().get_inJapanese()
+						+ ChatColor.AQUA + " < " + plugin.get_current_season()
+						+ " >");
 				return true;
 			}
 			// force next season
-			else if (args.length == 1) {
+			else if (args.length == 1
+					&& sender.hasPermission(get_permission_prefix() + "next")) {
 				if (args[0].equals("next")) {
 					plugin.set_force_next_season(true);
 					return true;
@@ -38,6 +42,10 @@ public class BasicCommand implements CommandExecutor {
 		}
 
 		return false;
+	}
+
+	private String get_permission_prefix() {
+		return "seasonalfood.";
 	}
 
 }

@@ -5,5 +5,3 @@ commands:
    sf:
       description: can deposit and withdraw to offline players.
       usage: /sf next
-      permission: seasonalfood.next
-      permission-message: You don't have <permission>
