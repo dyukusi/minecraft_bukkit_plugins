@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
+import com.sk89q.worldedit.Countable;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -41,7 +42,9 @@ public class BasicCommands implements CommandExecutor {
 				// set positions
 				if (args.length == 1) {
 
-					if (args[0].equals("first") || args[0].equals("second")) {
+					if ((args[0].equals("first") || args[0].equals("second"))
+							&& sender.hasPermission(get_permission_prefix()
+									+ "set")) {
 
 						Location location = player.getLocation();
 						player.setMetadata(this.cmd_prefix + args[0],
@@ -52,7 +55,9 @@ public class BasicCommands implements CommandExecutor {
 								+ location.getBlockZ());
 						return true;
 
-					} else if (args[0].equals("delete")) {
+					} else if (args[0].equals("delete")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "delete")) {
 
 						String area_name = plugin.get_current_area_name(player);
 
@@ -70,17 +75,19 @@ public class BasicCommands implements CommandExecutor {
 
 					}
 					// display all custom area
-					else if (args[0].equals("list")) {
+					else if (args[0].equals("list")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "list")) {
 						player.sendMessage(ChatColor.YELLOW
 								+ "----- CustomArea -----");
 						for (Entry<String, AreaInformation> ent : plugin
-								.get_area_entrySet()) {
+								.get_areainfo_map().entrySet()) {
 							AreaInformation info = ent.getValue();
 							Location[] loc = info.get_location();
 
 							String AreaName;
 
-							if (info.get_custom_area_name() != null) {
+							if (!info.get_custom_area_name().equals("null")) {
 								AreaName = info.get_custom_area_name();
 							} else {
 								AreaName = info.get_area_name();
@@ -88,13 +95,16 @@ public class BasicCommands implements CommandExecutor {
 
 							player.sendMessage(ChatColor.GOLD + AreaName
 									+ ChatColor.WHITE + " : "
-									+ info.get_range_str());
+									+ info.get_range_str() + " , "
+									+ info.get_owner_name());
 						}
 
 						return true;
 					}
 					// buy land
-					else if (args[0].equals("buy")) {
+					else if (args[0].equals("buy")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "buy")) {
 						if (!plugin.get_current_area_name(player)
 								.equals("null")) {
 							AreaInformation info = plugin.get_area_info(plugin
@@ -116,8 +126,6 @@ public class BasicCommands implements CommandExecutor {
 										.getBalance(player);
 
 								if (current_money >= info.get_price()) {
-									plugin.get_economy().withdrawPlayer(player,
-											info.get_price());
 
 									ProtectedRegion region = plugin
 											.get_wg()
@@ -126,30 +134,55 @@ public class BasicCommands implements CommandExecutor {
 															.getWorld())
 											.getRegion(info.get_area_name());
 
-									if (!info.get_owner_name().equals("none")) {
-										player.performCommand("od deposit "
-												+ info.get_owner_name() + " "
-												+ info.get_price() + " "
-												+ "土地買収" + ChatColor.AQUA
-												+ " <Purchase your land> ");
+									// count own lands
+									int ownland = 0;
+									for (AreaInformation area : plugin
+											.get_areainfo_map().values()) {
+										if (area.get_owner_name().equals(
+												player.getName()))
+											ownland++;
 									}
 
-									info.buy_land(player, region);
+									if (ownland <= 2) {
 
-									// set metadata
-									player.setMetadata(
-											"BuyLand",
-											new FixedMetadataValue(plugin, true));
+										plugin.get_economy().withdrawPlayer(
+												player, info.get_price());
 
-									player.sendMessage(ChatColor.GREEN
-											+ "おめでとうございます！土地の購入が完了しました。");
-									player.sendMessage(ChatColor.AQUA
-											+ "< Congraturations!! Now you are the owner of this land. >");
-								} else {
-									player.sendMessage(ChatColor.RED
-											+ "所持金が足りません。" + ChatColor.AQUA
-											+ " <Not enough money>");
+										if (!info.get_owner_name().equals(
+												"none")) {
+											player.performCommand("od deposit "
+													+ info.get_owner_name()
+													+ " " + info.get_price()
+													+ " " + "土地買収"
+													+ ChatColor.AQUA
+													+ " <Purchase your land> ");
+										}
+
+										info.buy_land(player, region);
+
+										// set metadata
+										player.setMetadata("BuyLand",
+												new FixedMetadataValue(plugin,
+														true));
+
+										player.sendMessage(ChatColor.GREEN
+												+ "おめでとうございます！土地の購入が完了しました。");
+										player.sendMessage(ChatColor.AQUA
+												+ "< Congraturations!! Now you are the owner of this land. >");
+									} else {
+										player.sendMessage(ChatColor.RED
+												+ "所持金が足りません。" + ChatColor.AQUA
+												+ " <Not enough money>");
+									}
+									
 								}
+								//having too many lands
+								else{
+									player.sendMessage(ChatColor.RED+"土地は一人２箇所まで所有することが可能です。");
+									player.sendMessage(ChatColor.AQUA+"< You can't have three or more lands. >");									
+								}
+								
+								return true;
 
 							}
 							// can not buy the land
@@ -166,7 +199,9 @@ public class BasicCommands implements CommandExecutor {
 						}
 
 						return true;
-					} else if (args[0].equals("sell")) {
+					} else if (args[0].equals("sell")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "sell")) {
 						if (!plugin.get_current_area_name(player)
 								.equals("null")) {
 							AreaInformation info = plugin.get_area_info(plugin
@@ -189,7 +224,9 @@ public class BasicCommands implements CommandExecutor {
 						return true;
 					}
 					// hide own area auto info
-					else if (args[0].equals("hide")) {
+					else if (args[0].equals("hide")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "hide")) {
 
 						// hide
 						if (!player.hasMetadata("hide_own_area_info")) {
@@ -216,10 +253,17 @@ public class BasicCommands implements CommandExecutor {
 						return true;
 
 					}
+					// list all lands
+					else if (args[0].equals("list")
+							&& sender.hasPermission("list")) {
+
+					}
 
 				} else if (args.length == 2) {
 
-					if (args[0].equals("create")) {
+					if (args[0].equals("create")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "create")) {
 
 						Location first = null, second = null;
 						List<MetadataValue> values = player
@@ -248,13 +292,13 @@ public class BasicCommands implements CommandExecutor {
 									+ " Need to set first and second position to create new area.");
 						} else {
 
-							plugin.add_new_area(new AreaInformation(args[1],
-									"null", player.getName(), 0, first, second,
-									true, true, plugin.get_current_hour_time()));
-
 							// expand vert
 							first.setY(0);
 							second.setY(255);
+
+							plugin.add_new_area(new AreaInformation(args[1],
+									"null", "none", 0, 0, first, second, false,
+									true, plugin.get_current_hour_time()));
 
 							ProtectedCuboidRegion new_area = new ProtectedCuboidRegion(
 									args[1],
@@ -275,7 +319,9 @@ public class BasicCommands implements CommandExecutor {
 
 					}
 					// delete area
-					else if (args[0].equals("delete")) {
+					else if (args[0].equals("delete")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "delete")) {
 						if (plugin.isRegisteredArea(args[1])) {
 							plugin.remove_custom_area(args[1]);
 							player.sendMessage(plugin.get_prefix() + " "
@@ -286,7 +332,9 @@ public class BasicCommands implements CommandExecutor {
 									+ args[1] + " wast not found.");
 						}
 						return true;
-					} else if (args[0].equals("ignorey")) {
+					} else if (args[0].equals("ignorey")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "ignorey")) {
 						if (plugin.isRegisteredArea(args[1])) {
 
 							AreaInformation info = plugin
@@ -316,7 +364,10 @@ public class BasicCommands implements CommandExecutor {
 						return true;
 					}
 					// reset owner
-					else if (args[0].equals("owner") && args[1].equals("reset")) {
+					else if (args[0].equals("owner")
+							&& args[1].equals("reset")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "reset")) {
 
 						if (!plugin.get_current_area_name(player)
 								.equals("null")) {
@@ -334,7 +385,9 @@ public class BasicCommands implements CommandExecutor {
 
 					} else if (args[0].equals("rename")) {
 						if (!plugin.get_current_area_name(player)
-								.equals("null")) {
+								.equals("null")
+								&& sender.hasPermission(get_permission_prefix()
+										+ "rename")) {
 							AreaInformation info = plugin.get_area_info(plugin
 									.get_current_area_name(player));
 							info.set_custom_area_name(args[1]);
@@ -342,7 +395,11 @@ public class BasicCommands implements CommandExecutor {
 									+ "Rename completed!");
 							return true;
 						}
-					} else if (args[0].equals("price")) {
+					}
+					// set owner price command
+					else if (args[0].equals("price")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "price")) {
 
 						try {
 							Integer.parseInt(args[1]);
@@ -358,8 +415,40 @@ public class BasicCommands implements CommandExecutor {
 								.equals("null")) {
 							AreaInformation info = plugin.get_area_info(plugin
 									.get_current_area_name(player));
-							info.set_price(new_price);
-							player.sendMessage("Land price change have been completed!");
+
+							if (info.get_owner_name().equals(player.getName())) {
+								info.set_price(new_price);
+								player.sendMessage("Land price change have been completed!");
+							} else {
+								player.sendMessage(ChatColor.RED
+										+ "土地のオーナーのみが価格を変更できます。");
+								player.sendMessage(ChatColor.AQUA
+										+ "< Must be owner to do this command. >");
+							}
+
+							return true;
+						}
+					}
+					// set initial price command
+					else if (args[0].equals("iniprice")
+							&& sender.hasPermission(get_permission_prefix()
+									+ "iniprice")) {
+						try {
+							Integer.parseInt(args[1]);
+						} catch (NumberFormatException e) {
+							player.sendMessage(ChatColor.RED
+									+ "Initial price amount must be integer.");
+							return true;
+						}
+
+						int new_price = Integer.parseInt(args[1]);
+
+						if (!plugin.get_current_area_name(player)
+								.equals("null")) {
+							AreaInformation info = plugin.get_area_info(plugin
+									.get_current_area_name(player));
+							info.set_initial_price(new_price);
+							player.sendMessage("Land initial price change has been completed!");
 							return true;
 						}
 					}
@@ -371,4 +460,9 @@ public class BasicCommands implements CommandExecutor {
 
 		return false;
 	}
+
+	private String get_permission_prefix() {
+		return "areamanager.";
+	}
+
 }

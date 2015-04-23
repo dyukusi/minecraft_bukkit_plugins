@@ -34,16 +34,16 @@ public class SaveAreaInfoData extends BukkitRunnable {
 			e.printStackTrace();
 		}
 
-		pw.println("# World, AreaName, CustomAreaName, Owner, Price, location1, location2, IgnoreY, CanBuy");
+		pw.println("# World, AreaName, CustomAreaName, Owner, InitialPrice, Price, location1, location2, IgnoreY, CanBuy");
 
 		// save area information
-		for (Entry<String, AreaInformation> ent : plugin.get_area_entrySet()) {
+		for (Entry<String, AreaInformation> ent : plugin.get_areainfo_map().entrySet()) {
 			AreaInformation info = ent.getValue();
 
 			pw.println(info.get_world_name() + "," + info.get_area_name() + ","
 					+ info.get_custom_area_name() + "," + info.get_owner_name()
-					+ "," + info.get_price() + ","
-					+ info.get_first_position()[0] + ","
+					+ "," + info.get_initial_price() + "," + info.get_price()
+					+ "," + info.get_first_position()[0] + ","
 					+ info.get_first_position()[1] + ","
 					+ info.get_first_position()[2] + ","
 					+ info.get_second_position()[0] + ","

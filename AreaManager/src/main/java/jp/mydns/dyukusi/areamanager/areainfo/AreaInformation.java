@@ -13,6 +13,7 @@ public class AreaInformation {
 	String custom_area_name;
 	String world_name;
 	String owner;
+	int initial_price;
 	int price;
 	int last_played_time;
 	private int f_x, f_y, f_z;
@@ -25,13 +26,14 @@ public class AreaInformation {
 	boolean can_buy;
 
 	public AreaInformation(String AreaName, String CustomAreaNAME,
-			String owner, int price, Location first, Location second,
-			boolean ignore_y, boolean can_buy, int last_played) {
+			String owner, int initial_price, int price, Location first,
+			Location second, boolean ignore_y, boolean can_buy, int last_played) {
 
 		this.area_name = AreaName;
-		this.custom_area_name = CustomAreaNAME;			
+		this.custom_area_name = CustomAreaNAME;
 		this.world_name = first.getWorld().getName();
 		this.owner = owner;
+		this.initial_price = initial_price;
 		this.price = price;
 
 		// first position
@@ -161,6 +163,10 @@ public class AreaInformation {
 		this.price *= 2;
 	}
 
+	public int get_initial_price() {
+		return this.initial_price;
+	}
+
 	public boolean get_can_buy() {
 		return this.can_buy;
 	}
@@ -187,6 +193,10 @@ public class AreaInformation {
 
 	public int get_last_played_time() {
 		return this.last_played_time;
+	}
+
+	public void set_initial_price(int new_price) {
+		this.initial_price = new_price;
 	}
 
 }

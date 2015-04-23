@@ -37,6 +37,28 @@ public class AreaInfoProvidor extends BukkitRunnable {
 
 			if (info != null) {
 
+				int sec = (int) (System.currentTimeMillis() / 1000);
+				int min = sec / 60;
+				int hour = min / 60;
+
+				int diff_hour = hour - info.get_last_played_time();
+
+				if (info.get_owner_name().equals("none")
+						|| (!plugin
+								.getServer()
+								.getOnlinePlayers()
+								.contains(
+										plugin.getServer()
+												.getOfflinePlayer(
+														info.get_owner_name())
+												.getPlayer()) && diff_hour >= 24 * 10)
+						|| info.get_owner_want_to_sell()) {
+					info.set_price(info.get_initial_price());
+					info.set_can_buy(true);
+				} else {
+					info.set_can_buy(false);
+				}
+
 				if (!player.hasMetadata("hide_own_area_info")
 						|| !info.get_owner_name().equals(player.getName())) {
 
@@ -57,27 +79,6 @@ public class AreaInfoProvidor extends BukkitRunnable {
 					player.sendMessage(ChatColor.YELLOW + "地価" + ChatColor.AQUA
 							+ "<LandPrice>" + ChatColor.WHITE + " : "
 							+ ChatColor.GOLD + info.get_price());
-
-					int sec = (int) (System.currentTimeMillis() / 1000);
-					int min = sec / 60;
-					int hour = min / 60;
-
-					int diff_hour = hour - info.get_last_played_time();
-
-					if (info.get_owner_name().equals("none")
-							|| (!plugin
-									.getServer()
-									.getOnlinePlayers()
-									.contains(
-											plugin.getServer()
-													.getOfflinePlayer(
-															info.get_owner_name())
-													.getPlayer()) && diff_hour >= 24 * 4)
-							|| info.get_owner_want_to_sell()) {
-						info.set_can_buy(true);
-					} else {
-						info.set_can_buy(false);
-					}
 
 					String canbuy;
 

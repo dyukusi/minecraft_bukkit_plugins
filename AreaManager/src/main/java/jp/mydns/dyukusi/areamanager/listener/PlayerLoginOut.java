@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 public class PlayerLoginOut implements Listener {
 
 	AreaManager plugin;
@@ -25,6 +27,25 @@ public class PlayerLoginOut implements Listener {
 	void PlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		new AreaInfoProvidor(plugin, player).runTaskTimer(plugin, 0, 13);
+
+		ProtectedRegion c1 = plugin.get_wg()
+				.getRegionManager(plugin.getServer().getWorld("world"))
+				.getRegion("concourse1");
+		ProtectedRegion c2 = plugin.get_wg()
+				.getRegionManager(plugin.getServer().getWorld("world"))
+				.getRegion("concourse2");
+		ProtectedRegion c3 = plugin.get_wg()
+				.getRegionManager(plugin.getServer().getWorld("world"))
+				.getRegion("concourse3");
+		ProtectedRegion c4 = plugin.get_wg()
+				.getRegionManager(plugin.getServer().getWorld("world"))
+				.getRegion("concourse4");
+		
+		c1.getMembers().addPlayer(player.getUniqueId());;
+		c2.getMembers().addPlayer(player.getUniqueId());;
+		c3.getMembers().addPlayer(player.getUniqueId());;
+		c4.getMembers().addPlayer(player.getUniqueId());;
+
 	}
 
 	@EventHandler
@@ -32,7 +53,7 @@ public class PlayerLoginOut implements Listener {
 
 		Player player = event.getPlayer();
 
-		for (Entry<String, AreaInformation> ent : plugin.get_area_entrySet()) {
+		for (Entry<String, AreaInformation> ent : plugin.get_areainfo_map().entrySet()) {
 			AreaInformation info = ent.getValue();
 
 			if (info.get_owner_name().equals(player.getName())) {
@@ -41,7 +62,7 @@ public class PlayerLoginOut implements Listener {
 				int hour = min / 60;
 				info.set_last_played_time(hour);
 			}
-		}	
+		}
 
 	}
 

@@ -101,20 +101,21 @@ public class AreaManager extends JavaPlugin {
 
 				String data[] = str.split(",");
 
-				// pw.println("# World, AreaName, CustomAreaName, Owner, Price, location1, location2, IgnoreY, CanBuy");
+				// pw.println("# World, AreaName, CustomAreaName, Owner, Initial price, Price, location1, location2, IgnoreY, CanBuy");
 				World world = getServer().getWorld(data[0]);
-				Location first = new Location(world, Integer.parseInt(data[5]),
-						Integer.parseInt(data[6]), Integer.parseInt(data[7]));
+				Location first = new Location(world, Integer.parseInt(data[6]),
+						Integer.parseInt(data[7]), Integer.parseInt(data[8]));
 				Location second = new Location(world,
-						Integer.parseInt(data[8]), Integer.parseInt(data[9]),
-						Integer.parseInt(data[10]));
+						Integer.parseInt(data[9]), Integer.parseInt(data[10]),
+						Integer.parseInt(data[11]));
 
 				this.area_info.put(
 						data[1],
-						new AreaInformation(data[1], data[2], data[3], Integer
-								.parseInt(data[4]), first, second, Boolean
-								.valueOf(data[11]), Boolean.valueOf(data[12]),
-								Integer.parseInt(data[13])));
+						new AreaInformation(data[1], data[2], data[3], Integer.parseInt(data[4]),
+								Integer.parseInt(data[5]), first, second,
+								Boolean.valueOf(data[12]), Boolean
+										.valueOf(data[13]), Integer
+										.parseInt(data[14])));
 			}
 			sc.close();
 			getLogger().info("Loading area data has been completed!!");
@@ -225,9 +226,10 @@ public class AreaManager extends JavaPlugin {
 		this.area_info.remove(area_name);
 	}
 
-	public Set<Entry<String, AreaInformation>> get_area_entrySet() {
-		return this.area_info.entrySet();
+	public HashMap<String, AreaInformation> get_areainfo_map() {
+		return this.area_info;
 	}
+	
 
 	public void add_new_area(AreaInformation info) {
 		this.area_info.put(info.get_area_name(), info);
