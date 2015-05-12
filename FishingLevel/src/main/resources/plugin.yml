@@ -1,0 +1,7 @@
+name: FishingLevel
+version: 0.0.1
+main: jp.mydns.dyukusi.fishinglevel.FishingLevel
+commands:
+   fl:
+      description: FishingLevel base command.
+      usage: /fl
