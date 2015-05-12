@@ -7,20 +7,20 @@ import org.bukkit.Location;
 
 public class Portal_Information implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private UUID creater_uuid;
+	private String creater_name;
 	private int charge;
 	private String comment;
 	private int frequency;
 
-	public Portal_Information(UUID CREATER_UUID, int COST, String COMMENT) {
-		this.creater_uuid = CREATER_UUID;
+	public Portal_Information(String CREATER_NAME, int COST, String COMMENT) {
+		this.creater_name = CREATER_NAME;
 		this.charge = COST;
 		this.comment = COMMENT;
 		this.frequency = 0;
 	}
 
-	UUID get_creater_uuid() {
-		return this.creater_uuid;
+	String get_creater_name() {
+		return this.creater_name;
 	}
 
 	int get_charge() {
@@ -30,8 +30,8 @@ public class Portal_Information implements Serializable {
 	String get_comment() {
 		return this.comment;
 	}
-	
-	int get_frequency(){		
+
+	int get_frequency() {
 		return this.frequency;
 	}
 
@@ -42,8 +42,8 @@ public class Portal_Information implements Serializable {
 	void set_charge(int new_charge) {
 		this.charge = new_charge;
 	}
-	
-	void increment_frequency(){
+
+	void increment_frequency() {
 		this.frequency++;
 	}
 

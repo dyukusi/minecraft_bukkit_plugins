@@ -25,6 +25,14 @@ public class command implements CommandExecutor {
 			if (cmd.equals("cts")) {
 
 				switch (args.length) {
+				case 1:
+					if (args[0].equals("fare")) {
+						player.sendMessage(ChatColor.GREEN + " PortalFare : "
+								+ ChatColor.GOLD
+								+ plugin.get_fare(player.getLocation()));
+						return true;
+					}
+					break;
 				case 3:
 					// コメント登録コマンド
 					// cts comment [PORTAL_NAME] [COMMENT]
@@ -41,11 +49,21 @@ public class command implements CommandExecutor {
 						if (plugin.get_creater_map().containsKey(portal_name)) {
 							portal = plugin.get_creater_map().get(portal_name);
 
-							portal.set_comment(comment);
-							player.sendMessage(portal_name + " のコメントを更新しました。 "
-									+ ChatColor.AQUA + "< The comment of "
-									+ ChatColor.WHITE + portal_name
-									+ ChatColor.AQUA + " has been updated. >");
+							if (portal.get_creater_name().equals(
+									player.getName())) {
+
+								portal.set_comment(comment);
+								player.sendMessage(portal_name
+										+ " のコメントを更新しました。 " + ChatColor.AQUA
+										+ "< The comment of " + ChatColor.WHITE
+										+ portal_name + ChatColor.AQUA
+										+ " has been updated. >");
+							} else {
+								player.sendMessage(ChatColor.RED
+										+ "ポータル経営者のみがコメント文を変更できます。");
+								player.sendMessage(ChatColor.AQUA
+										+ "< Must be creater to do this command. >");
+							}
 
 							return true;
 
@@ -77,13 +95,26 @@ public class command implements CommandExecutor {
 
 						if (plugin.get_creater_map().containsKey(portal_name)) {
 							// 手数料の設定
-							plugin.get_creater_map().get(portal_name)
-									.set_charge(charge);
-							player.sendMessage(ChatColor.WHITE + portal_name
-									+ ChatColor.LIGHT_PURPLE + "の手数料が更新されました！ "
-									+ ChatColor.AQUA + "< The charge of "
-									+ ChatColor.WHITE + portal_name
-									+ ChatColor.AQUA + " has been updated! >");
+							Portal_Information info = plugin.get_creater_map()
+									.get(portal_name);
+
+							if (info.get_creater_name()
+									.equals(player.getName())) {
+								info.set_charge(charge);
+
+								player.sendMessage(ChatColor.WHITE
+										+ portal_name + ChatColor.LIGHT_PURPLE
+										+ "の手数料が更新されました！ " + ChatColor.AQUA
+										+ "< The charge of " + ChatColor.WHITE
+										+ portal_name + ChatColor.AQUA
+										+ " has been updated! >");
+							}else {
+								player.sendMessage(ChatColor.RED
+										+ "ポータル経営者のみが手数料を変更できます。");
+								player.sendMessage(ChatColor.AQUA
+										+ "< Must be creater to do this command. >");
+							}
+
 						}
 						// 指定された名前のポータルが存在しない
 						else {
@@ -100,6 +131,7 @@ public class command implements CommandExecutor {
 						}
 						return true;
 					}
+
 					break;
 				default:
 					break;

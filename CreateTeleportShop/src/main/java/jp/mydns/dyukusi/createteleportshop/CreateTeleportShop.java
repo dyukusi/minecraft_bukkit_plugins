@@ -11,6 +11,7 @@ import java.util.HashMap;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -23,7 +24,7 @@ public class CreateTeleportShop extends JavaPlugin {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnable() {
-		
+
 		// mcstats
 		try {
 			Metrics metrics = new Metrics(this);
@@ -34,8 +35,8 @@ public class CreateTeleportShop extends JavaPlugin {
 		}
 
 		getCommand("cts").setExecutor(new command(this));
-		
-		//シリアライズファイル読み込み
+
+		// シリアライズファイル読み込み
 		serialize_path = this.getDataFolder().getAbsolutePath()
 				+ "/creatermap.bin";
 		try {
@@ -92,20 +93,47 @@ public class CreateTeleportShop extends JavaPlugin {
 	}
 
 	boolean setupEconomy() {
-		
+
 		RegisteredServiceProvider<Economy> economyProvider = getServer()
 				.getServicesManager().getRegistration(
 						net.milkbowl.vault.economy.Economy.class);
-		
+
 		if (economyProvider != null) {
 			this.economy = economyProvider.getProvider();
 		}
 		return (economy != null);
-	
+
 	}
 
 	HashMap<String, Portal_Information> get_creater_map() {
 		return this.creater_map;
+	}
+
+	int get_fare(Location loc) {
+		int center_x = 1682;
+		int center_z = 1256;
+
+		int x = loc.getBlockX();
+		int z = loc.getBlockZ();
+
+		int diff_x = Math.abs(center_x - x);
+		int diff_z = Math.abs(center_z - z);
+
+		int distance = (int) Math.sqrt(Math.pow(diff_x, 2)
+				+ Math.pow(diff_z, 2));
+
+		//in city
+		if (distance <= 255)
+			return 0;
+		else{
+			distance -= 255;
+		}
+		
+		if(distance < 0){
+			distance = 0;
+		}
+		
+		return distance/2;
 	}
 
 }
