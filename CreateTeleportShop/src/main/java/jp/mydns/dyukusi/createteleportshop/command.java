@@ -33,6 +33,40 @@ public class command implements CommandExecutor {
 						return true;
 					}
 					break;
+				case 2:
+					if (args[1].equals("delete")) {
+
+						if (plugin.get_creater_map().containsKey(args[2])) {
+
+							Portal_Information del_portal = plugin
+									.get_creater_map().get(args[2]);
+
+							// can delete by portal creator only
+							if (del_portal.get_creater_name().equals(
+									player.getName())) {
+
+								plugin.getServer().dispatchCommand(
+										plugin.getServer().getConsoleSender(),
+										"/wp-portal-delete " + args[2]);
+							} else {
+								player.sendMessage(ChatColor.RED
+										+ "ポータルの経営者のみ削除することができます。");
+								player.sendMessage(ChatColor.AQUA
+										+ "<Can delete by the owner of the portal only.>");
+							}
+
+						} else {
+							player.sendMessage(ChatColor.GOLD
+									+ args[2]
+									+ ChatColor.RED
+									+ " という名前のポータルは存在しません。 /wp-portal-list コマンドで確認して下さい。");
+							player.sendMessage(ChatColor.AQUA
+									+ "<There isn't the portal. Please check portal name by /wp-portal-list >");
+						}
+
+						return true;
+					}
+					break;
 				case 3:
 					// コメント登録コマンド
 					// cts comment [PORTAL_NAME] [COMMENT]
@@ -108,7 +142,7 @@ public class command implements CommandExecutor {
 										+ "< The charge of " + ChatColor.WHITE
 										+ portal_name + ChatColor.AQUA
 										+ " has been updated! >");
-							}else {
+							} else {
 								player.sendMessage(ChatColor.RED
 										+ "ポータル経営者のみが手数料を変更できます。");
 								player.sendMessage(ChatColor.AQUA
