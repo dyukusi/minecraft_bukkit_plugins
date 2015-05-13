@@ -20,7 +20,10 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class DropMoney implements Listener {
 
@@ -33,60 +36,73 @@ public class DropMoney implements Listener {
 	}
 
 	@EventHandler
+	void MonsterSpawner(CreatureSpawnEvent event) {
+		if (event.getSpawnReason().equals(SpawnReason.SPAWNER)) {
+			event.getEntity().setMetadata("spawner",
+					new FixedMetadataValue(plugin, true));
+		}
+	}
+
+	@EventHandler
 	void EntityKilled(EntityDeathEvent event) {
 
-		// monster death
-		if (event.getEntity() instanceof Monster) {
-			Entity monster = event.getEntity();
+		//if monster was spawned not by MonsterSpawner
+		if (!event.getEntity().hasMetadata("spawner")) {
 
-			if (event.getEntity().getKiller() instanceof Player) {
-				Player player = (Player) event.getEntity().getKiller();
-				String monster_name;
-				int base_reward;
+			// monster death
+			if (event.getEntity() instanceof Monster) {
+				Entity monster = event.getEntity();
 
-				switch (monster.getType()) {
+				if (event.getEntity().getKiller() instanceof Player) {
+					Player player = (Player) event.getEntity().getKiller();
+					String monster_name;
+					int base_reward;
 
-				// Normal creeper or Charged creeper?
-				case CREEPER:
-					monster_name = CreeperIdentifier((Creeper) monster);
-					break;
+					switch (monster.getType()) {
 
-				case GUARDIAN:
-					monster_name = GuardianIdentifier((Guardian) monster);
-					break;
+					// Normal creeper or Charged creeper?
+					case CREEPER:
+						monster_name = CreeperIdentifier((Creeper) monster);
+						break;
 
-				case SKELETON:
-					monster_name = SkeletonIdentifier((Skeleton) monster);
-					break;
+					case GUARDIAN:
+						monster_name = GuardianIdentifier((Guardian) monster);
+						break;
 
-				default:
-					monster_name = monster.getType().name();
-					break;
+					case SKELETON:
+						monster_name = SkeletonIdentifier((Skeleton) monster);
+						break;
+
+					default:
+						monster_name = monster.getType().name();
+						break;
+					}
+
+					// get base reward
+					base_reward = plugin.get_base_reward(monster_name);
+
+					if (base_reward <= 0) {
+						base_reward = 0;
+						plugin.getServer().broadcastMessage(
+								plugin.get_prefix() + " There is no "
+										+ monster_name + "'s reward data.");
+						plugin.getServer()
+								.broadcastMessage(
+										plugin.get_prefix()
+												+ " Please configure config.yml file in plugin folder.");
+					}
+
+					Map<Enchantment, Integer> ench = player.getItemInHand()
+							.getEnchantments();
+					double ench_effect = plugin.get_ench_effect(ench);
+					int result_reward = (int) (base_reward * ench_effect);
+					message_reward(player, monster, result_reward);
+					economy.depositPlayer(player, result_reward);
+					// plugin.getServer().broadcastMessage(
+					// event.getEntity().getType().name() + " は " +
+					// event.getEntity().getKiller() + "に倒された！");
+
 				}
-
-				// get base reward
-				base_reward = plugin.get_base_reward(monster_name);
-
-				if (base_reward <= 0) {
-					base_reward = 0;
-					plugin.getServer().broadcastMessage(
-							plugin.get_prefix() + " There is no "
-									+ monster_name + "'s reward data.");
-					plugin.getServer()
-							.broadcastMessage(
-									plugin.get_prefix()
-											+ " Please configure config.yml file in plugin folder.");
-				}
-
-				Map<Enchantment, Integer> ench = player.getItemInHand()
-						.getEnchantments();
-				double ench_effect = plugin.get_ench_effect(ench);
-				int result_reward = (int) (base_reward * ench_effect);
-				message_reward(player, monster, result_reward);
-				economy.depositPlayer(player, result_reward);
-				// plugin.getServer().broadcastMessage(
-				// event.getEntity().getType().name() + " は " +
-				// event.getEntity().getKiller() + "に倒された！");
 
 			}
 
