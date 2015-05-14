@@ -21,7 +21,7 @@ public class GainExperience extends BukkitRunnable {
 	Material result;
 
 	public GainExperience(CraftLevel PLUGIN, Player PLAYER, boolean SUCCESS,
-			Recipe RECIPE,Material RESULT) {
+			Recipe RECIPE, Material RESULT) {
 		this.plugin = PLUGIN;
 		this.player = PLAYER;
 		this.success = SUCCESS;
@@ -30,7 +30,6 @@ public class GainExperience extends BukkitRunnable {
 	}
 
 	public void run() {
-		
 
 		this.pinfo = plugin.get_player_crafting_level_info(player);
 
@@ -47,18 +46,17 @@ public class GainExperience extends BukkitRunnable {
 			// failure
 			if (!success) {
 				gain_exp *= material_info.get_success_rate(pinfo.get_level());
-			}			
-	
-			
-			if(material_info.get_custom_experience() >= 0){
+			}
+
+			if (material_info.get_custom_experience() >= 0) {
 				gain_exp = material_info.get_custom_experience();
-			}				
+			}
 
 			if (gain_exp > 0) {
 
 				boolean levelup = pinfo.gain_exp(gain_exp,
-						plugin.get_next_level_exp(),
-						CraftLevel.get_max_craft_level());
+						CraftLevel.get_next_level_exp(),
+						CraftLevel.get_max_craft_level(),plugin);
 
 				player.sendMessage(Message.Craft_Gain_Experience.get_message(
 						gain_exp,
@@ -69,7 +67,18 @@ public class GainExperience extends BukkitRunnable {
 				// level up
 				if (levelup) {
 					
-					plugin.getServer().broadcastMessage(Message.Craft_Levelup.get_message(player.getName(),pinfo.get_level()));
+					//broadcast?
+					if (plugin.get_broadcast_levelup()) {
+						plugin.getServer().broadcastMessage(
+								Message.Craft_Levelup.get_message(
+										player.getName(), pinfo.get_level()));
+					} 
+					//send message to the player only
+					else {
+						player.sendMessage(Message.Craft_Levelup.get_message(
+								player.getName(), pinfo.get_level()));
+					}
+
 					player.playSound(player.getLocation(), Sound.LEVEL_UP, 1,
 							0.5F);
 				}

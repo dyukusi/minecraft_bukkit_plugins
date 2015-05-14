@@ -3,6 +3,8 @@ package jp.mydns.dyukusi.craftlevel.level;
 import java.io.Serializable;
 import java.util.UUID;
 
+import jp.mydns.dyukusi.craftlevel.CraftLevel;
+
 import org.bukkit.entity.Player;
 
 public class PlayerCraftLevelData implements Serializable {
@@ -47,7 +49,8 @@ public class PlayerCraftLevelData implements Serializable {
 	}
 
 	// true if level up
-	public boolean gain_exp(int gain, int next_exp[], int max_level) {
+	public boolean gain_exp(int gain, int next_exp[], int max_level,
+			CraftLevel plugin) {
 		this.exp += gain;
 
 		if (this.exp >= next_exp[level]) {
@@ -58,10 +61,30 @@ public class PlayerCraftLevelData implements Serializable {
 				this.exp = 0;
 			}
 
+			// Tweet
+			String tweet_msg = null;
+			switch (this.level) {
+			case 10:
+				tweet_msg = name + "はCraftLevelが10になり、クラフターへの道へ一歩踏み出した！";
+				break;
+			case 30:
+				tweet_msg = name + "はCraftLevelが30になり、鉄をも加工する術を身につけた！";
+				break;
+			case 60:
+				tweet_msg = name + "はCraftLevel60を達成し、クラフト名人としてその名を世界に轟かせた！";
+				break;
+			default:
+				break;
+			}
+
+			if (tweet_msg != null) {
+				plugin.getServer().dispatchCommand(
+						plugin.getServer().getConsoleSender(), "ta tweet "+tweet_msg);
+			}
+
 			return true;
 		}
 
 		return false;
 	}
-
 }

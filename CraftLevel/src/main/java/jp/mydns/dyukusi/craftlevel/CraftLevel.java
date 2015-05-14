@@ -1,19 +1,11 @@
 package jp.mydns.dyukusi.craftlevel;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,7 +38,7 @@ public class CraftLevel extends JavaPlugin {
 	private static int minimum_success_rate, maximum_success_rate,
 			increase_rate, max_craft_level;
 	private int backup_per;
-	boolean no_requirements_data_error;
+	boolean no_requirements_data_error, broadcast_levelup;
 
 	@Override
 	public void onEnable() {
@@ -69,6 +61,7 @@ public class CraftLevel extends JavaPlugin {
 
 		no_requirements_data_error = getConfig().getBoolean(
 				"no_requirements_data_error");
+		broadcast_levelup = getConfig().getBoolean("broadcast_levelup");
 		minimum_success_rate = getConfig().getInt("minimum_success_rate");
 		maximum_success_rate = getConfig().getInt("maximum_success_rate");
 		increase_rate = getConfig().getInt("increase_rate");
@@ -162,6 +155,7 @@ public class CraftLevel extends JavaPlugin {
 					character_data_path + ".backup").runTaskTimer(this, 0,
 					20 * 60 * backup_per);
 		}
+
 	}
 
 	@Override
@@ -274,6 +268,10 @@ public class CraftLevel extends JavaPlugin {
 
 	public static String get_prefix() {
 		return prefix;
+	}
+
+	public boolean get_broadcast_levelup() {
+		return this.broadcast_levelup;
 	}
 
 	public static MaterialInfo get_material_info(Material material) {

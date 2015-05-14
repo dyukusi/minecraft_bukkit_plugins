@@ -15,6 +15,9 @@ no_requirements_data_error: true
 #Max craft level
 max_craft_level: 50
 
+#Broadcast player's levelup?
+broadcast_levelup: true
+
 #Frequency(min) of backup player's craft level & exp data. 0 = disable
 backup: 60
 
