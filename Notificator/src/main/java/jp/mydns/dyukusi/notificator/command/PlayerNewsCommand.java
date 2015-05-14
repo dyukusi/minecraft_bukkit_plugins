@@ -8,8 +8,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.defaults.SayCommand;
-import org.bukkit.entity.Player;
 
 public class PlayerNewsCommand implements CommandExecutor {
 	Notificator plugin;
@@ -78,85 +76,103 @@ public class PlayerNewsCommand implements CommandExecutor {
 
 					} else if (args.length >= 3) {
 
-						if (args[1].equals("add")
-								&& sender.hasPermission(this
-										.get_permission_prefix() + "add")) {
+						if (args[1].equals("add")) {
 
-							// enough money?
-							if (economy.getBalance((OfflinePlayer) sender) >= player_news_charge) {
+							if (sender.hasPermission(this
+									.get_permission_prefix() + "add")) {
 
-								// withdraw from sender's account
-								economy.withdrawPlayer((OfflinePlayer) sender,
-										player_news_charge);
+								// enough money?
+								if (economy.getBalance((OfflinePlayer) sender) >= player_news_charge) {
 
-								StringBuffer message = new StringBuffer("");
+									// withdraw from sender's account
+									economy.withdrawPlayer(
+											(OfflinePlayer) sender,
+											player_news_charge);
 
-								for (int i = 2; i < args.length; i++) {
+									StringBuffer message = new StringBuffer("");
 
-									if (i != 1)
-										message.append(" ");
+									for (int i = 2; i < args.length; i++) {
 
-									message.append(args[i]);
-								}
+										if (i != 1)
+											message.append(" ");
 
-								if (message.length() > player_news_char_limit) {
+										message.append(args[i]);
+									}
+
+									if (message.length() > player_news_char_limit) {
+										sender.sendMessage(ChatColor.RED
+												+ Integer
+														.toString(player_news_char_limit)
+												+ "文字以下である必要があります。");
+										sender.sendMessage(ChatColor.AQUA
+												+ "< Need less than "
+												+ Integer
+														.toString(player_news_char_limit)
+												+ " characters >");
+										return true;
+									}
+
+									// add news to list
+									plugin.add_player_news(
+											plugin.get_current_time(),
+											sender.getName(),
+											message.toString(), true);
+
+									// Tweet
+									plugin.getServer().dispatchCommand(
+											plugin.getServer()
+													.getConsoleSender(),
+											"ta tweet " + sender.getName()
+													+ "「" + message.toString()
+													+ "」");
+
+									return true;
+
+								} else {
 									sender.sendMessage(ChatColor.RED
-											+ Integer
-													.toString(player_news_char_limit)
-											+ "文字以下である必要があります。");
-									sender.sendMessage(ChatColor.AQUA
-											+ "< Need less than "
-											+ Integer
-													.toString(player_news_char_limit)
-											+ " characters >");
+											+ "所持金が足りません！" + ChatColor.AQUA
+											+ " < Not enough money >");
+									return true;
+								}
+							} else if (args[1].equals("delete")
+									&& sender
+											.hasPermission(this
+													.get_permission_prefix()
+													+ "delete")) {
+
+								try {
+									Integer.parseInt(args[2]);
+								} catch (NumberFormatException e) {
+									plugin.display_help(sender);
+									sender.sendMessage(ChatColor.RED
+											+ "Must be integer to select message index.");
 									return true;
 								}
 
-								// add news to list
-								plugin.add_player_news(
-										plugin.get_current_time(),
-										sender.getName(), message.toString(),
-										true);
+								int index = Integer.parseInt(args[2]);
 
+								if (plugin.get_player_news().size() < index + 1) {
+									plugin.display_help(sender);
+									sender.sendMessage(ChatColor.RED
+											+ "Invalid index number.");
+									return true;
+								}
+
+								plugin.get_player_news().remove(index);
+								sender.sendMessage(ChatColor.GREEN
+										+ "Delete player message " + index
+										+ " completed.");
 								return true;
 
-							} else {
-								sender.sendMessage(ChatColor.RED + "所持金が足りません！"
-										+ ChatColor.AQUA
-										+ " < Not enough money >");
-								return true;
 							}
-						} else if (args[1].equals("delete")
-								&& sender.hasPermission(this
-										.get_permission_prefix() + "delete")) {
-
-							try {
-								Integer.parseInt(args[2]);
-							} catch (NumberFormatException e) {
-								plugin.display_help(sender);
-								sender.sendMessage(ChatColor.RED
-										+ "Must be integer to select message index.");
-								return true;
-							}
-
-							int index = Integer.parseInt(args[2]);
-
-							if (plugin.get_player_news().size() < index + 1) {
-								plugin.display_help(sender);
-								sender.sendMessage(ChatColor.RED
-										+ "Invalid index number.");
-								return true;
-							}
-
-							plugin.get_player_news().remove(index);
-							sender.sendMessage(ChatColor.GREEN
-									+ "Delete player message " + index
-									+ " completed.");
-							return true;
 
 						}
-
+					} else {
+						sender.sendMessage(ChatColor.RED
+								+ "You don't have permission.");
+						return true;
 					}
+
 				}
 
 			}
