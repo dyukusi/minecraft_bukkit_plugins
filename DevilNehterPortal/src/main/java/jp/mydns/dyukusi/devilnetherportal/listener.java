@@ -37,12 +37,15 @@ public class listener implements Listener {
 		Player player = event.getPlayer();
 
 		// Normal -> Nether
-		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)
-				&& event.getTo().getWorld().getEnvironment().equals(Environment.NETHER)) {
+		if (event.getFrom().getWorld().getEnvironment()
+				.equals(Environment.NORMAL)
+				&& event.getTo().getWorld().getEnvironment()
+						.equals(Environment.NETHER)) {
 
 			plugin.getServer().broadcastMessage(
-					ChatColor.RED + player.getName() + " は愚かにも自ら地獄へ足を踏み入れた！ " + ChatColor.AQUA + "< "
-							+ player.getName() + " fall into the HELL.>");
+					ChatColor.RED + player.getName() + " は愚かにも自ら地獄へ足を踏み入れた！ "
+							+ ChatColor.AQUA + "< " + player.getName()
+							+ " fall into the HELL.>");
 
 			World to = event.getTo().getWorld();
 			Chunk center = to.getChunkAt(event.getTo());
@@ -51,12 +54,15 @@ public class listener implements Listener {
 			new process(plugin, to, center).runTaskLater(plugin, 100);
 
 			// 座標保存
-			player.setMetadata("from_gate_point", new FixedMetadataValue(plugin, new from_point(player.getWorld(),
-					player.getLocation())));
+			player.setMetadata(
+					"from_gate_point",
+					new FixedMetadataValue(plugin, new from_point(player
+							.getWorld(), player.getLocation())));
 
 			// インベントリのブレイズロッドを消失させる処理
 			if (player.getInventory().contains(Material.BLAZE_ROD)) {
-				player.sendMessage(ChatColor.DARK_RED + "インベントリ内のブレイズロッドを全て失った！ " + ChatColor.AQUA
+				player.sendMessage(ChatColor.DARK_RED
+						+ "インベントリ内のブレイズロッドを全て失った！ " + ChatColor.AQUA
 						+ "<You lose all blaze rod in your inventory!>");
 				player.getInventory().remove(Material.BLAZE_ROD);
 			}
@@ -120,15 +126,18 @@ public class listener implements Listener {
 
 			boolean announce = false;
 			for (Block block : event.getBlocks()) {
-				Location spawn1 = new Location(block.getWorld(), block.getX() + 2, block.getY() + 1, block.getZ() - 2);
-				Location spawn2 = new Location(block.getWorld(), block.getX() - 2, block.getY() + 1, block.getZ() + 2);
+				Location spawn1 = new Location(block.getWorld(),
+						block.getX() + 2, block.getY() + 1, block.getZ() - 2);
+				Location spawn2 = new Location(block.getWorld(),
+						block.getX() - 2, block.getY() + 1, block.getZ() + 2);
 
 				if (block.getLocation().getY() % 2 == 0)
 					block.getWorld().spawnEntity(spawn1, EntityType.PIG_ZOMBIE);
 				else
 					block.getWorld().spawnEntity(spawn2, EntityType.SKELETON);
 
-				block.getWorld().playSound(block.getLocation(), Sound.AMBIENCE_THUNDER, 20, 5F);
+				block.getWorld().playSound(block.getLocation(),
+						Sound.AMBIENCE_THUNDER, 20, 5F);
 
 				// Fall Thunder!
 				event.getWorld().strikeLightning(block.getLocation());
@@ -136,17 +145,32 @@ public class listener implements Listener {
 
 				if (!announce) {
 					announce = true;
-					String gate = "(" + block.getX() + "," + block.getY() + "," + block.getY() + ")";
+					String gate = "(" + block.getX() + "," + block.getY() + ","
+							+ block.getY() + ")";
 
-					if (event.getWorld().getEnvironment().equals(Environment.NORMAL)) {
+					if (event.getWorld().getEnvironment()
+							.equals(Environment.NORMAL)) {
+
 						plugin.getServer().broadcastMessage(
-								ChatColor.RED + "(x,y,z) = " + gate + "に地獄へと続く扉が開かれた。 " + ChatColor.AQUA
-										+ "< HELL GATE was opend at " + gate + " >");
-						plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "weather thunder");
+								ChatColor.RED + "(x,y,z) = " + gate
+										+ "に地獄へと続く扉が開かれた。 " + ChatColor.AQUA
+										+ "< HELL GATE was opend at " + gate
+										+ " >");
+						plugin.getServer().dispatchCommand(
+								plugin.getServer().getConsoleSender(),
+								"weather thunder");
+
+						// Tweet
+						plugin.getServer().dispatchCommand(
+								plugin.getServer().getConsoleSender(),
+								"ta tweet " + "(x,y,z) = " + gate
+										+ "に地獄へと続く扉が新たに開かれた！");
+
 					}
 
 					for (Player player : plugin.getServer().getOnlinePlayers()) {
-						block.getWorld().playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 20, 5F);
+						block.getWorld().playSound(player.getLocation(),
+								Sound.AMBIENCE_THUNDER, 20, 5F);
 					}
 				}
 			}
@@ -163,9 +187,11 @@ public class listener implements Listener {
 	@EventHandler
 	void PortalCreate(PortalCreateEvent event) {
 		World world = event.getWorld();
-		if (world.getEnvironment().equals(Environment.NETHER) && !event.isCancelled()) {
+		if (world.getEnvironment().equals(Environment.NETHER)
+				&& !event.isCancelled()) {
 			// ゲートを封鎖するタスク
-			new process(plugin, world, world.getChunkAt(event.getBlocks().get(0))).runTaskLater(plugin, 60);
+			new process(plugin, world, world.getChunkAt(event.getBlocks()
+					.get(0))).runTaskLater(plugin, 60);
 
 		}
 	}
@@ -174,13 +200,28 @@ public class listener implements Listener {
 	void BlockPlce(BlockPlaceEvent event) {
 		Material material = event.getBlock().getType();
 
-		if (event.getPlayer().getWorld().getEnvironment().equals(Environment.NETHER)) {
-			if (material.equals(Material.ENDER_CHEST) || material.equals(Material.CHEST)
-					|| material.equals(Material.TRAPPED_CHEST)) {
+		if (event.getPlayer().getWorld().getEnvironment()
+				.equals(Environment.NETHER)) {
+
+			switch (material) {
+			case ENDER_CHEST:
+			case CHEST:
+			case DROPPER:
+			case BREWING_STAND:
+			case FURNACE:
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(plugin.get_prefix() + ChatColor.RED + " チェストが灼熱に耐えられない！");
-				event.getPlayer().sendMessage(ChatColor.AQUA + "< Chests can't bear the scorching heat! >");
+				event.getPlayer().sendMessage(
+						plugin.get_prefix() + ChatColor.RED
+								+ " ブロックが灼熱に耐えられない！");
+				event.getPlayer().sendMessage(
+						ChatColor.AQUA
+								+ "< This can't bear the scorching heat! >");
+
+				break;
+			default:
+				break;
 			}
+
 		}
 	}
 }

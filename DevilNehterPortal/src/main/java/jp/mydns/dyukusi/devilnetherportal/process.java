@@ -34,6 +34,10 @@ public class process extends BukkitRunnable {
 			if (player.getWorld().getEnvironment().equals(Environment.NETHER)) {
 				player.sendMessage(plugin.get_prefix() + ChatColor.RED + " 不思議な力によって帰路が絶たれた！");
 				player.sendMessage(ChatColor.AQUA + "< Mysterious magical power shut the way to the home. >");
+				player.sendMessage(plugin.get_prefix() + ChatColor.RED + " /escape コマンドで脱出を試みます。");
+				player.sendMessage(ChatColor.AQUA + "< Use [/escape] command to escape if you can...hehehe. >");
+				
+				
 			}
 		}
 
