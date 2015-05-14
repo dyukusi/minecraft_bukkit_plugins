@@ -1,7 +1,15 @@
 package jp.mydns.dyukusi.areamanager.areainfo;
 
+import jp.mydns.dyukusi.areamanager.AreaManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dropper;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -197,6 +205,78 @@ public class AreaInformation {
 
 	public void set_initial_price(int new_price) {
 		this.initial_price = new_price;
+	}
+
+	public void remove_sign_chest(AreaManager plugin) {
+		World world = plugin.getServer().getWorld(this.world_name);
+		Block block;
+
+		for (int x = small_x; x <= big_x; x++) {
+			for (int z = small_z; z <= big_z; z++) {
+				for (int y = 1; y <= 255; y++) {
+					block = world.getBlockAt(x, y, z);
+
+					switch (block.getType()) {
+					case CHEST:
+						Chest chest = (Chest) block.getState();
+						chest.getBlockInventory().clear();
+
+					case WALL_SIGN:
+					case SIGN_POST:
+											
+						// remove block
+						block.setType(Material.AIR);
+											
+						break;
+						
+					case FURNACE:
+					case BURNING_FURNACE:
+						Furnace furnace = (Furnace) block.getState();
+						furnace.getInventory().clear();
+						block.setType(Material.AIR);
+						break;
+						
+					case DROPPER:
+						Dropper dropper = (Dropper) block.getState();
+						dropper.getInventory().clear();
+						block.setType(Material.AIR);
+						break;
+						
+
+					default:
+						break;
+					}
+
+				}
+			}
+		}
+
+	}
+
+	public void initialize(AreaManager plugin, int base_y) {
+		World world = plugin.getServer().getWorld(this.world_name);
+		Block block;
+
+		for (int x = small_x; x <= big_x; x++) {
+			for (int z = small_z; z <= big_z; z++) {
+				for (int y = 1; y <= 255; y++) {
+
+					block = world.getBlockAt(x, y, z);										
+					
+					//grass
+					if(y <= base_y){
+						block.setType(Material.GRASS);
+					}
+					//air
+					else{
+						block.setType(Material.AIR);						
+					}
+					
+					
+				}
+			}
+		}
+
 	}
 
 }

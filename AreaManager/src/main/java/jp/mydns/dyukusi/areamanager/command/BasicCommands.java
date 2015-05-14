@@ -8,10 +8,12 @@ import jp.mydns.dyukusi.areamanager.areainfo.AreaInformation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -25,6 +27,7 @@ public class BasicCommands implements CommandExecutor {
 
 	private String cmd_prefix = "am_";
 	AreaManager plugin;
+	int base_y = 69;
 
 	public BasicCommands(AreaManager areaManager) {
 		plugin = areaManager;
@@ -160,6 +163,8 @@ public class BasicCommands implements CommandExecutor {
 
 										info.buy_land(player, region);
 
+										info.remove_sign_chest(plugin);
+
 										// set metadata
 										player.setMetadata("BuyLand",
 												new FixedMetadataValue(plugin,
@@ -169,19 +174,38 @@ public class BasicCommands implements CommandExecutor {
 												+ "おめでとうございます！土地の購入が完了しました。");
 										player.sendMessage(ChatColor.AQUA
 												+ "< Congraturations!! Now you are the owner of this land. >");
-									} else {
-										player.sendMessage(ChatColor.RED
-												+ "所持金が足りません。" + ChatColor.AQUA
-												+ " <Not enough money>");
+										player.sendMessage(ChatColor.LIGHT_PURPLE
+												+ "土地の中で"
+												+ ChatColor.GOLD
+												+ "/am resetland"
+												+ ChatColor.LIGHT_PURPLE
+												+ "コマンドを実行することで、");
+										player.sendMessage(ChatColor.LIGHT_PURPLE
+												+ "土地を更地に初期化することができます。(ブロックは全て消失します)");
+
+										player.sendMessage(ChatColor.AQUA
+												+ "< You can initialize the land by executing /am resetland >");
+										
+										
+										//Tweet 
+										plugin.getServer().dispatchCommand(
+												plugin.getServer().getConsoleSender(),
+												"ta tweet " + player.getName()+"は土地"+info.get_area_name()+"を購入した！");
 									}
-									
+									// having too many lands
+									else {
+										player.sendMessage(ChatColor.RED
+												+ "土地は一人２箇所まで所有することが可能です。");
+										player.sendMessage(ChatColor.AQUA
+												+ "< You can't have three or more lands. >");
+									}
+
+								} else {
+									player.sendMessage(ChatColor.RED
+											+ "所持金が足りません。" + ChatColor.AQUA
+											+ " <Not enough money>");
 								}
-								//having too many lands
-								else{
-									player.sendMessage(ChatColor.RED+"土地は一人２箇所まで所有することが可能です。");
-									player.sendMessage(ChatColor.AQUA+"< You can't have three or more lands. >");									
-								}
-								
+
 								return true;
 
 							}
@@ -253,10 +277,36 @@ public class BasicCommands implements CommandExecutor {
 						return true;
 
 					}
-					// list all lands
-					else if (args[0].equals("list")
-							&& sender.hasPermission("list")) {
+					// init the land( remove all blocks )
+					else if (args[0].equals("resetland")
+							&& sender.hasPermission("reset")) {
 
+						AreaInformation info = plugin.get_area_info(plugin
+								.get_current_area_name(player));
+
+						if (info.get_owner_name().equals(player.getName())) {
+
+							// initialize the land
+							info.initialize(plugin, base_y);
+
+							Location tp = player.getLocation();
+							tp.setY(base_y + 3);
+							player.teleport(tp);
+							player.playSound(player.getLocation(),
+									Sound.EXPLODE, 1F, 0.7F);
+
+							player.sendMessage(ChatColor.GREEN
+									+ "土地の初期化が完了しました！");
+							player.sendMessage(ChatColor.AQUA
+									+ "< Succeeded to initialize the land >");
+						} else {
+							player.sendMessage(ChatColor.RED
+									+ "地主のみが土地を初期することができます。");
+							player.sendMessage(ChatColor.AQUA
+									+ "< Only land owner can initialize the land. >");
+						}
+
+						return true;
 					}
 
 				} else if (args.length == 2) {

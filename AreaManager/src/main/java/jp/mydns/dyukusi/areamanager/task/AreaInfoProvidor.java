@@ -43,22 +43,28 @@ public class AreaInfoProvidor extends BukkitRunnable {
 
 				int diff_hour = hour - info.get_last_played_time();
 
-				if (info.get_owner_name().equals("none")
-						|| (!plugin
-								.getServer()
-								.getOnlinePlayers()
-								.contains(
-										plugin.getServer()
-												.getOfflinePlayer(
-														info.get_owner_name())
-												.getPlayer()) && diff_hour >= 24 * 10)
-						|| info.get_owner_want_to_sell()) {
+				boolean time_up = (!plugin
+						.getServer()
+						.getOnlinePlayers()
+						.contains(
+								plugin.getServer()
+										.getOfflinePlayer(info.get_owner_name())
+										.getPlayer()) && diff_hour >= 24 * 10) ? true
+						: false;
+				
+				//initialize land price
+				if (time_up || info.get_owner_name().equals("none")) {
 					info.set_price(info.get_initial_price());
+				}			
+
+				//can buy or not
+				if(info.get_owner_want_to_sell() || time_up || info.get_owner_name().equals("none")){
 					info.set_can_buy(true);
-				} else {
+				}
+				else{
 					info.set_can_buy(false);
 				}
-
+				
 				if (!player.hasMetadata("hide_own_area_info")
 						|| !info.get_owner_name().equals(player.getName())) {
 
