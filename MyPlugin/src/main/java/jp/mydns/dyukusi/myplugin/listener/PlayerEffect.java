@@ -3,10 +3,13 @@ package jp.mydns.dyukusi.myplugin.listener;
 import java.util.Random;
 
 import jp.mydns.dyukusi.craftlevel.CraftLevel;
-import jp.mydns.dyukusi.craftlevel.new_config_info;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.myplugin.MyPlugin;
 import jp.mydns.dyukusi.myplugin.task.FireProtection;
+import jp.mydns.dyukusi.myplugin.task.SetLevel;
+import jp.mydns.dyukusi.myplugin.task.ToumeiEffect;
+import jp.mydns.dyukusi.myplugin.task.VehicleRidingHunger;
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,7 +18,6 @@ import org.bukkit.Sound;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -29,25 +31,25 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockCanBuildEvent;
-import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -55,10 +57,100 @@ public class PlayerEffect implements Listener {
 
 	MyPlugin plugin;
 	CraftLevel cl;
+	Economy economy;
 
-	public PlayerEffect(MyPlugin myPlugin, CraftLevel craftlevel) {
+
+	public PlayerEffect(MyPlugin myPlugin, CraftLevel craftlevel,
+			Economy economy) {
 		this.plugin = myPlugin;
 		this.cl = craftlevel;
+		this.economy = economy;
+	}
+
+	@EventHandler
+	void VehicleRidingTaskForJoinPlayer(PlayerJoinEvent event){
+		new VehicleRidingHunger(plugin, event.getPlayer()).runTaskTimerAsynchronously(plugin, 10, 100);
+	}
+
+	@EventHandler
+	void ToumeiPotionInNether(PlayerItemConsumeEvent event) {
+		new ToumeiEffect(plugin, event.getPlayer()).runTaskLater(plugin, 5);
+	}
+	
+	
+
+	@EventHandler
+	void Enchantment(EnchantItemEvent event) {
+		Player player = event.getEnchanter();
+		
+		int require = event.getExpLevelCost();
+		int level_cost = 0;
+		int default_cost = 0;
+
+		if (require <= 9) {
+			level_cost = 10;
+			default_cost = 1;
+		} else if (22 <= require) {
+			level_cost = 30;
+			default_cost = 3;
+		} else {
+			level_cost = 20;
+			default_cost = 2;
+		}
+
+		// enough
+		if (player.getLevel() >= level_cost) {
+			//pay level
+
+			int reduce = player.getLevel() - (level_cost - default_cost);
+			
+			new SetLevel(plugin,player,reduce).runTaskLater(plugin, 5);
+			
+		}
+		// not enough
+		else {
+			event.setCancelled(true);
+			player.sendMessage(ChatColor.RED + "そのエンチャントにはレベルを"
+					+ ChatColor.GOLD + level_cost + ChatColor.RED
+					+ "消費する必要がある。");
+			player.sendMessage(ChatColor.AQUA + "Require to pay " + level_cost
+					+ "Level for the enchantment.");
+		}
+
+	}
+
+	@EventHandler
+	void DethInNether(PlayerDeathEvent event) {
+		Player player = event.getEntity();
+
+		// player death in nether
+		if (player.getWorld().getEnvironment().equals(Environment.NETHER) && player.isDead()) {
+			int having = (int) this.economy.getBalance(player);
+
+			int lose_money = (int) (having * 0.2);
+
+			this.economy.withdrawPlayer(player, lose_money);
+
+			player.sendMessage(ChatColor.RED + "地獄の呪いにより " + ChatColor.GOLD
+					+ lose_money + "$ " + ChatColor.RED + "失った！");
+			player.sendMessage(ChatColor.AQUA + "< You lose " + ChatColor.GOLD
+					+ lose_money + "$！ >");
+
+		}
+
+	}
+
+	@EventHandler
+	void DiamondOre(BlockBreakEvent event) {
+
+		if (event.getBlock().getType().equals(Material.DIAMOND_ORE)) {
+			event.setCancelled(true);
+			event.getBlock().setType(Material.AIR);
+			event.getBlock()
+					.getWorld()
+					.dropItemNaturally(event.getBlock().getLocation(),
+							new ItemStack(Material.DIAMOND));
+		}
 	}
 
 	@EventHandler
@@ -118,33 +210,34 @@ public class PlayerEffect implements Listener {
 	}
 
 	// ゾンビ、スケルトン、クリーパー、魔女　頭部ドロップ設定
+	@EventHandler
 	void HeadDrop(EntityDeathEvent event) {
 
 		Random r = new Random();
 
 		if (event.getEntity() instanceof Skeleton) {
-			if (r.nextInt() % 23 == 0) {
+			if (r.nextInt() % 75 == 0) {
 				event.getDrops().add(
 						new ItemStack(Material.SKULL_ITEM, 1, (short) 0));
 			}
 		}
 
 		if (event.getEntity() instanceof Zombie) {
-			if (r.nextInt() % 23 == 0) {
+			if (r.nextInt() % 100 == 0) {
 				event.getDrops().add(
 						new ItemStack(Material.SKULL_ITEM, 1, (short) 2));
 			}
 		}
 
 		if (event.getEntity() instanceof Witch) {
-			if (r.nextInt() % 23 == 0) {
+			if (r.nextInt() % 25 == 0) {
 				event.getDrops().add(
 						new ItemStack(Material.SKULL_ITEM, 1, (short) 3));
 			}
 		}
 
 		if (event.getEntity() instanceof Creeper) {
-			if (r.nextInt() % 23 == 0) {
+			if (r.nextInt() % 50 == 0) {
 				event.getDrops().add(
 						new ItemStack(Material.SKULL_ITEM, 1, (short) 4));
 			}
@@ -189,6 +282,8 @@ public class PlayerEffect implements Listener {
 			}
 			// default guardian
 			else {
+				
+				event.getDrops().clear();
 
 				if (r.nextInt() % 2 == 0) {
 					event.getDrops().add(

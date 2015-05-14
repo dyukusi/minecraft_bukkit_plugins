@@ -20,36 +20,38 @@ public class MyCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
-		if (sender instanceof Player) {
+		if (command.getName().equals("mp")) {
 
-			Player player = (Player) sender;
+			switch (args[0]) {
+			case "lban":
 
-			if (command.getName().equals("mp")) {
+				if (args.length == 3) {
 
-				// set positions
-				if (args.length == 1) {
+					if (plugin.getServer().getPlayer(args[2]) != null) {
 
-					if (args[0].equals("demo")) {
+						// ban player
+						plugin.getServer().dispatchCommand(
+								plugin.getServer().getConsoleSender(),
+								"ban " + args[2]);
 
-						// 城塞都市
-						player.teleport(new Location(player.getWorld(), -4923,
-								65, 5315));
+						plugin.getServer().dispatchCommand(
+								plugin.getServer().getConsoleSender(),
+								"ta tweet " + args[2] + " は、 [" + args[3]
+										+ "] という理由でBANされた");
 
-						return true;
-					} else if (args[0].equals("kastel")) {
-
-						// kastel仮拠点
-						player.teleport(new Location(player.getWorld(), -670,
-								69, 602));
-
-						return true;
+					} else {
+						sender.sendMessage(args[2] + " というプレイヤーは存在しません。");
 					}
 
 				}
 
-			}
-			
+				break;
 
+			default:
+				break;
+			}
+
+			return true;
 		}
 
 		return false;
