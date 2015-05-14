@@ -14,10 +14,8 @@ import jp.mydns.dyukusi.fishinglevel.playerdata.PlayerFishingLevelData;
 import jp.mydns.dyukusi.fishinglevel.task.SavePlayerFishingData;
 import jp.mydns.dyukusi.seasonalfood.SeasonalFood;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 public class FishingLevel extends JavaPlugin {
 
@@ -32,14 +30,6 @@ public class FishingLevel extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		// mcstats
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			this.getLogger().info(ChatColor.RED + "Failed to submit the stats");
-			// Failed to submit the stats
-		}
 
 		// import SeasonalFood plugin
 		if ((this.seasonalfood = (SeasonalFood) this.getServer()

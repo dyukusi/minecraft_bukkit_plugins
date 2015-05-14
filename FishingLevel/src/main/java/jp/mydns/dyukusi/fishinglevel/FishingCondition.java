@@ -65,7 +65,7 @@ public enum FishingCondition {
 			new CaughtItem(new ItemStack(Material.SLIME_BALL, 1, (short) 0),1),
 			new CaughtItem(new ItemStack(Material.MAGMA_CREAM, 1, (short) 0),1),
 			new CaughtItem(new ItemStack(Material.EYE_OF_ENDER, 1, (short) 0),1),
-			new CaughtItem(new ItemStack(Material.GHAST_TEAR, 1, (short) 1),1)}	
+			new CaughtItem(new ItemStack(Material.GHAST_TEAR, 1),1)}	
 	),
 	
 	FishingPoint6(new CaughtItem[] { 
@@ -277,14 +277,14 @@ public enum FishingCondition {
 	),
 	
 	FishingPoint22(new CaughtItem[] { 
-			new CaughtItem(new ItemStack(Material.RAW_FISH, 1, (short) 0),35),					
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 0),10),
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 1),10),
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 2),10),
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 3),10),
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 4),10),
-			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 5),10),
-			new CaughtItem(new ItemStack(Material.NAME_TAG, 1, (short) 0),3),
+			new CaughtItem(new ItemStack(Material.RAW_FISH, 1, (short) 0),50),					
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 54),20),
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 50),10),
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 65),10),
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 60),4),
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 59),2),
+			new CaughtItem(new ItemStack(Material.MONSTER_EGG, 1, (short) 58),1),
+			new CaughtItem(new ItemStack(Material.NAME_TAG, 1, (short) 0),1),
 			new CaughtItem(new ItemStack(Material.GOLD_RECORD, 1, (short) 0),1),
 			new CaughtItem(new ItemStack(Material.GREEN_RECORD, 1, (short) 0),1)}
 	);

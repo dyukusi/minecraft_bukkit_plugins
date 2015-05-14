@@ -21,7 +21,6 @@ public class SavePlayerFishingData extends BukkitRunnable {
 		this.path = path;
 	}
 
-	@Override
 	public void run() {
 		plugin.getLogger().info("Saving Player's FishingLevel data...");
 

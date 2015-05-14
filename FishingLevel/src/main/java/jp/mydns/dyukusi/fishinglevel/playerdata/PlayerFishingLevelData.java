@@ -57,6 +57,29 @@ public class PlayerFishingLevelData {
 			this.set_exp(this.exp - required_exp);
 			this.level_up_or_not(plugin, player,
 					plugin.get_required_exp_from_level(this.get_level()));
+
+			// Tweet
+			String tweet_msg = null;
+			switch (this.level) {
+			case 10:
+				tweet_msg = this.player_name+"はFishingLevelが10になり、釣り師としての一歩を踏み出した！";
+				break;
+				
+			case 30:
+				tweet_msg = this.player_name+"はFishingLevelが30になり、釣りの才能の頭角を現し始めた！";				
+				break;
+				
+			case 50:
+				tweet_msg = this.player_name+"はFishingLevel60を達成し、伝説の釣り師としてその名を世界に轟かせた！";								
+				break;
+			default:
+				break;
+			}
+			if (tweet_msg != null) {
+				plugin.getServer().dispatchCommand(
+						plugin.getServer().getConsoleSender(), "ta tweet "+tweet_msg);
+			}
+
 		}
 
 	}
