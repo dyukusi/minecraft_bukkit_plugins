@@ -11,6 +11,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.w3c.dom.events.EventTarget;
@@ -44,6 +45,18 @@ public class cts_listener implements Listener {
 		} else {
 			plugin.SaveCreatePortalData(event.getPortal().name,
 					new Portal_Information(creater.getName(), 0, "NO COMMENT"));
+
+			// place
+			Location loc = creater.getLocation();
+			String place = "(" + loc.getBlockX() + ", " + loc.getBlockY()
+					+ ", " + loc.getBlockZ() + ")";
+
+			// Tweet
+			plugin.getServer().dispatchCommand(
+					plugin.getServer().getConsoleSender(),
+					"ta tweet " + creater.getName() + "は" + place + "に"
+							+ event.getPortal().name + "という名の新しいポータルを開いた!");
+
 		}
 	}
 
@@ -73,7 +86,7 @@ public class cts_listener implements Listener {
 			if (money >= TOTAL_FEE) {
 
 				if (TOTAL_FEE > 0) {
-					economy.withdrawPlayer(player, TOTAL_FEE);
+					economy.withdrawPlayer(player, FARE);
 					player.sendMessage(ChatColor.WHITE + "" + TOTAL_FEE
 							+ ChatColor.GREEN + " ＄を支払ってテレポートした！ "
 							+ ChatColor.AQUA + "< You have teleported for "

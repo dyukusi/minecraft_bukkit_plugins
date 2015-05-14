@@ -34,20 +34,26 @@ public class command implements CommandExecutor {
 					}
 					break;
 				case 2:
-					if (args[1].equals("delete")) {
+					if (args[0].equals("delete")) {
 
-						if (plugin.get_creater_map().containsKey(args[2])) {
+						if (plugin.get_creater_map().containsKey(args[1])) {
 
 							Portal_Information del_portal = plugin
-									.get_creater_map().get(args[2]);
+									.get_creater_map().get(args[1]);
 
 							// can delete by portal creator only
 							if (del_portal.get_creater_name().equals(
 									player.getName())) {
 
-								plugin.getServer().dispatchCommand(
-										plugin.getServer().getConsoleSender(),
-										"/wp-portal-delete " + args[2]);
+								CommandSender console = plugin.getServer().getConsoleSender();
+								StringBuffer del_command = new StringBuffer("wp-portal-delete");
+								del_command.append(" "+args[1]);
+								
+								plugin.getServer().dispatchCommand(console,del_command.toString());
+								
+								player.performCommand("wp-portal-delete " + args[1]);
+								
+								player.sendMessage(ChatColor.GREEN+"ポータルの削除に成功しました。"+ChatColor.AQUA+" <Succeeded to delete the portal>");
 							} else {
 								player.sendMessage(ChatColor.RED
 										+ "ポータルの経営者のみ削除することができます。");
@@ -57,7 +63,7 @@ public class command implements CommandExecutor {
 
 						} else {
 							player.sendMessage(ChatColor.GOLD
-									+ args[2]
+									+ args[1]
 									+ ChatColor.RED
 									+ " という名前のポータルは存在しません。 /wp-portal-list コマンドで確認して下さい。");
 							player.sendMessage(ChatColor.AQUA
