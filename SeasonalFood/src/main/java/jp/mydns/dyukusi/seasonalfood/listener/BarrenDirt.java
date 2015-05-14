@@ -31,7 +31,11 @@ public class BarrenDirt implements Listener {
 					.getData().getData()))) {
 				plugin.set_dirt_from_soil(block);
 			}
-
+			//20min/gDay
+			//3gDay/h
+			//72日/Day
+			//
+			
 		}
 
 	}

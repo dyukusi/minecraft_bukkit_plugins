@@ -1,14 +1,11 @@
 package jp.mydns.dyukusi.seasonalfood.task;
 
-import java.util.Calendar;
-
 import jp.mydns.dyukusi.seasonalfood.SeasonalFood;
 import jp.mydns.dyukusi.seasonalfood.seasontype.SeasonType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.junit.internal.builders.AnnotatedBuilder;
 
 public class SeasonChanger extends BukkitRunnable {
 
@@ -17,13 +14,7 @@ public class SeasonChanger extends BukkitRunnable {
 
 	public SeasonChanger(SeasonalFood seasonalFood) {
 		this.plugin = seasonalFood;
-		current_season = get_current_season();
-	}
-
-	SeasonType get_current_season() {
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-
-		return SeasonType.values()[(day / 3) % SeasonType.values().length];
+		current_season = seasonalFood.get_current_season();
 	}
 
 	public void run() {
@@ -31,11 +22,13 @@ public class SeasonChanger extends BukkitRunnable {
 		SeasonType new_season;
 
 		if (!plugin.get_force_next_season()) {
-			new_season = get_current_season();
+			new_season = plugin.get_current_season();
+			// new_season = this.current_season;
 		}
 		// force next season
 		else {
-			new_season = get_current_season();
+			new_season = SeasonType.values()[(current_season.get_index() + 1)
+					% SeasonType.values().length];
 			// new_date = -1;
 		}
 
@@ -46,6 +39,7 @@ public class SeasonChanger extends BukkitRunnable {
 			// % SeasonType.values().length];
 
 			plugin.set_current_season(new_season);
+
 			plugin.display_season(true, null, new_season);
 
 			String seasonal_crop;
@@ -75,30 +69,37 @@ public class SeasonChanger extends BukkitRunnable {
 				break;
 			}
 
-			String season_change_str = ChatColor.RED + "ERROR";
+			String season_change_jp = ChatColor.RED + "ERROR";
+			String season_change_en = ChatColor.RED + "ERROR";
 
 			// spring summer autumn
 			if (!new_season.equals(SeasonType.WINTER)) {
-
-				for (Player player : plugin.getServer().getOnlinePlayers()) {
-					player.sendMessage(plugin.get_prefix() + " "
-							+ new_season.get_inJapanese() + "になりました。"
-							+ seasonal_crop + "が旬になりました。");
-					player.sendMessage(ChatColor.AQUA + "< " + new_season
-							+ " has come. " + seasonal_crop_eng + " are now in season! >");
-
-				}
-
+				season_change_jp = plugin.get_prefix() + " "
+						+ new_season.get_inJapanese() + "になりました。"
+						+ seasonal_crop + "が旬になりました。";
+				season_change_en = ChatColor.AQUA + "< " + new_season
+						+ " has come. " + seasonal_crop_eng
+						+ " are now in season! >";
 			} else {
 
-				for (Player player : plugin.getServer().getOnlinePlayers()) {
-					player.sendMessage(plugin.get_prefix() + " "
-							+ new_season.get_inJapanese()
-							+ "になりました。 蓄えた食料で冬を乗り越えましょう。");
-					player.sendMessage(ChatColor.AQUA + "< " + new_season
-							+ " has come. Survive the harsh winter with your food reserves. >");
-				}
+				season_change_jp = plugin.get_prefix() + " "
+						+ new_season.get_inJapanese()
+						+ "になりました。 蓄えた食料で冬を乗り越えましょう。";
+				season_change_en = ChatColor.AQUA
+						+ "< "
+						+ new_season
+						+ " has come. Survive the harsh winter with your food reserves. >";
 			}
+
+			for (Player player : plugin.getServer().getOnlinePlayers()) {
+				player.sendMessage(season_change_jp);
+				player.sendMessage(season_change_en);
+			}
+
+			// Tweet
+			plugin.getServer().dispatchCommand(
+					plugin.getServer().getConsoleSender(),
+					"ta tweet " + season_change_jp);
 
 		}
 

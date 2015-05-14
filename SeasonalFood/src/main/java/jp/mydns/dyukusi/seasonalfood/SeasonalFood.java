@@ -1,6 +1,7 @@
 package jp.mydns.dyukusi.seasonalfood;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import jp.mydns.dyukusi.seasonalfood.task.SeasonChanger;
 import jp.mydns.dyukusi.title.Title;
 
 import org.bukkit.ChatColor;
-import org.bukkit.CropState;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -32,7 +32,9 @@ public class SeasonalFood extends JavaPlugin {
 	public void onEnable() {
 
 		this.ripe_rate_map = new HashMap<Material, Double[]>();
+//		this.current_season = get_current_season();
 		this.current_season = SeasonType.SPRING;
+		
 		this.force_next_season = false;
 
 		// config test
@@ -69,6 +71,7 @@ public class SeasonalFood extends JavaPlugin {
 
 		// register command
 		getCommand("sf").setExecutor(new BasicCommand(this));
+		
 	}
 
 	@Override
@@ -89,7 +92,10 @@ public class SeasonalFood extends JavaPlugin {
 	}
 
 	public SeasonType get_current_season() {
-		return current_season;
+		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+
+		return SeasonType.values()[(day / 3) % SeasonType.values().length];
+//		return this.current_season;
 	}
 
 	public void set_current_season(SeasonType season) {
@@ -133,9 +139,17 @@ public class SeasonalFood extends JavaPlugin {
 		}
 		// to player
 		else {
-			change_season.send(player);
-			player.playSound(player.getLocation(), Sound.AMBIENCE_CAVE, 1.5F,
-					0.8F);
+
+			if (!(player == null)) {
+
+				change_season.send(player);
+				player.playSound(player.getLocation(), Sound.AMBIENCE_CAVE,
+						1.5F, 0.8F);
+			}
+			else{
+				this.getServer().broadcastMessage("PLAYER_NULL");
+			}
+
 		}
 
 	}
