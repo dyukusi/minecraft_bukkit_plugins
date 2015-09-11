@@ -160,6 +160,10 @@ public class CraftLevel extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		this.SaveCraftLevelData();
+	}
+
+	public void SaveCraftLevelData() {
 		new SavePlayerCLdata(this, this.player_crafting_level,
 				character_data_path).run();
 	}
@@ -284,10 +288,15 @@ public class CraftLevel extends JavaPlugin {
 
 	}
 
-	public static String get_message(Message msg) {
+	public static String get_message(Message msg, boolean display_prefix) {
 
 		if (message.containsKey(msg)) {
-			return prefix + " " + message.get(msg);
+
+			if (display_prefix) {
+				return prefix + " " + message.get(msg);
+			}
+
+			return message.get(msg);
 
 		}
 		// not difined

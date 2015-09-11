@@ -49,11 +49,13 @@ public class PlayerCraftLevelData implements Serializable {
 	}
 
 	// true if level up
-	public boolean gain_exp(int gain, int next_exp[], int max_level,
+	public int gain_exp(int gain, int next_exp[], int max_level,
 			CraftLevel plugin) {
 		this.exp += gain;
+		int level_up = 0;
 
-		if (this.exp >= next_exp[level]) {
+		while (this.exp >= next_exp[level]) {
+			level_up++;
 			this.exp -= next_exp[level];
 			this.level++;
 
@@ -79,12 +81,12 @@ public class PlayerCraftLevelData implements Serializable {
 
 			if (tweet_msg != null) {
 				plugin.getServer().dispatchCommand(
-						plugin.getServer().getConsoleSender(), "ta tweet "+tweet_msg);
+						plugin.getServer().getConsoleSender(),
+						"ta tweet " + tweet_msg);
 			}
 
-			return true;
 		}
-
-		return false;
+		
+		return level_up;
 	}
 }

@@ -5,6 +5,7 @@ import jp.mydns.dyukusi.craftlevel.config.Message;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
 import jp.mydns.dyukusi.craftlevel.materialinfo.MaterialInfo;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ public class GainExperience extends BukkitRunnable {
 	Recipe recipe;
 	PlayerCraftLevelData pinfo;
 	Material result;
+	int success_rate;
 
 	public GainExperience(CraftLevel PLUGIN, Player PLAYER, boolean SUCCESS,
 			Recipe RECIPE, Material RESULT) {
@@ -27,11 +29,12 @@ public class GainExperience extends BukkitRunnable {
 		this.success = SUCCESS;
 		this.recipe = RECIPE;
 		this.material_info = CraftLevel.get_material_info(RESULT);
+		this.pinfo = plugin.get_player_crafting_level_info(player);
+		this.success_rate = (int) (material_info.get_success_rate(pinfo
+				.get_level()) * 100);
 	}
 
 	public void run() {
-
-		this.pinfo = plugin.get_player_crafting_level_info(player);
 
 		// lower than max level
 		if (pinfo.get_level() < CraftLevel.get_max_craft_level()) {
@@ -54,29 +57,30 @@ public class GainExperience extends BukkitRunnable {
 
 			if (gain_exp > 0) {
 
-				boolean levelup = pinfo.gain_exp(gain_exp,
+				int levelup = pinfo.gain_exp(gain_exp,
 						CraftLevel.get_next_level_exp(),
-						CraftLevel.get_max_craft_level(),plugin);
+						CraftLevel.get_max_craft_level(), plugin);
 
 				player.sendMessage(Message.Craft_Gain_Experience.get_message(
-						gain_exp,
-						pinfo.get_exp(),
+						gain_exp, pinfo.get_exp(),
 						CraftLevel.get_next_level_exp()[pinfo.get_level()],
-						(int) (material_info.get_success_rate(pinfo.get_level()) * 100)));
+						success_rate));
 
 				// level up
-				if (levelup) {
-					
-					//broadcast?
+				if (levelup > 0) {
+
+					// broadcast?
 					if (plugin.get_broadcast_levelup()) {
 						plugin.getServer().broadcastMessage(
 								Message.Craft_Levelup.get_message(
-										player.getName(), pinfo.get_level()));
-					} 
-					//send message to the player only
+										player.getName(), pinfo.get_level()
+												- levelup, pinfo.get_level()));
+					}
+					// send message to the player only
 					else {
 						player.sendMessage(Message.Craft_Levelup.get_message(
-								player.getName(), pinfo.get_level()));
+								player.getName(), pinfo.get_level() - levelup,
+								pinfo.get_level()));
 					}
 
 					player.playSound(player.getLocation(), Sound.LEVEL_UP, 1,
@@ -84,6 +88,9 @@ public class GainExperience extends BukkitRunnable {
 				}
 
 			}
+		} else {
+			player.sendMessage(Message.Craft_Success_Rate.get_message(
+					success_rate, true));
 		}
 
 	}

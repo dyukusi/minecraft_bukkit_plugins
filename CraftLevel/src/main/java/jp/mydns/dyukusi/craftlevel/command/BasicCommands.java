@@ -2,6 +2,7 @@ package jp.mydns.dyukusi.craftlevel.command;
 
 import jp.mydns.dyukusi.craftlevel.CraftLevel;
 import jp.mydns.dyukusi.craftlevel.level.PlayerCraftLevelData;
+import jp.mydns.dyukusi.craftlevel.task.SavePlayerCLdata;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -91,7 +92,13 @@ public class BasicCommands implements CommandExecutor {
 						// set exp PlayerName amount
 						if (args.length == 4) {
 
-							if (plugin
+							if (plugin.getServer().getPlayer(args[2]) == null) {
+								sender.sendMessage(this
+										.get_player_not_found_message(args[2]));
+								return false;
+							}
+
+							else if (plugin
 									.get_player_crafting_level_info_contains(plugin
 											.getServer()
 											.getOfflinePlayer(args[2])
@@ -116,11 +123,6 @@ public class BasicCommands implements CommandExecutor {
 								return true;
 
 							}
-							// player not found error
-							else {
-								sender.sendMessage(this
-										.get_player_not_found_message(args[2]));
-							}
 
 						}
 					} else {
@@ -129,7 +131,11 @@ public class BasicCommands implements CommandExecutor {
 						return true;
 					}
 
+				} else if (args[0].equals("save")) {
+					plugin.SaveCraftLevelData();
+					return true;
 				}
+
 			}
 
 		}

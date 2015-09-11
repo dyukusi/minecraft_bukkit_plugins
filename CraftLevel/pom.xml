@@ -34,13 +34,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>title</groupId>
-			<artifactId>title</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/title.jar</systemPath>
-		</dependency>
 	</dependencies>
 
 	<build>

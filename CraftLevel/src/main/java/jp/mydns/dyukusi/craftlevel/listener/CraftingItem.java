@@ -28,6 +28,7 @@ public class CraftingItem implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	void Crafting(CraftItemEvent event) {
+		
 		Player creater = (Player) event.getWhoClicked();
 		PlayerCraftLevelData pinfo = plugin
 				.get_player_crafting_level_info(creater);
